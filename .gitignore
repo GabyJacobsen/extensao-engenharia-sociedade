@@ -1,0 +1,19 @@
+# Sistema Operacional e Editores
+.DS_Store
+Thumbs.db
+desktop.ini
+*.tmp
+*.bak
+*.swp
+*~
+
+# VS Code / IDEs
+.vscode/
+*.code-workspace
+.idea/
+
+# Builds e temporários
+node_modules/
+dist/
+build/
+*.log
