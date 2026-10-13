@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Missão Entre Fios &amp; Fritas — Oficina de Eletrônica IFSC</title>
+  
+  <!-- Tipografia Moderna & Dinâmica -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;600;700;800;900&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #FAF9F5;
+      --bg-card: #FFFFFF;
+      --bg-panel: #F4EFE6;
+      --line: #E6DFD3;
+      --line-strong: #D5CBBC;
+      --ink: #191B1D;
+      --ink-soft: #454B52;
+      --ink-muted: #79828B;
+      
+      /* Cores Vibrantes da Oficina Lúdica */
+      --ifsc-green: #009639;
+      --ifsc-red: #C8102E;
+      --accent-orange: #EB6A20;
+      --accent-yellow: #F6A709;
+      --accent-warm: #FFF2E0;
+      --accent-blue: #2563EB;
+      --accent-purple: #7C3AED;
+      
+      --font-head: 'Libre Franklin', -apple-system, sans-serif;
+      --font-body: 'Source Sans 3', -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      
+      --shadow-sm: 0 2px 8px rgba(25, 27, 29, 0.05);
+      --shadow-md: 0 12px 28px -10px rgba(25, 27, 29, 0.1);
+      --shadow-lg: 0 22px 46px -16px rgba(25, 27, 29, 0.14);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      width: 100%;
+      height: 100%;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--font-body);
+      overflow: hidden;
+      user-select: none;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Container Principal */
+    .deck-container {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      background: radial-gradient(1100px 650px at 85% -5%, var(--accent-warm) 0%, transparent 65%), var(--bg);
+    }
+
+    /* Barra de Progresso com Gradiente Alegre */
+    .top-progress {
+      height: 6px;
+      width: 100%;
+      background: var(--line);
+      position: relative;
+      z-index: 100;
+    }
+    .top-progress-fill {
+      height: 100%;
+      width: 10%;
+      background: linear-gradient(90deg, var(--ifsc-green) 0%, var(--accent-yellow) 50%, var(--accent-orange) 100%);
+      transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Topbar Temática */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 36px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(10px);
+      z-index: 50;
+    }
+    .topbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .topbar-logo {
+      height: 30px;
+      width: auto;
+      object-fit: contain;
+    }
+    .topbar-title {
+      font-family: var(--font-head);
+      font-weight: 800;
+      font-size: 15px;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .badge-mission {
+      font-family: var(--font-head);
+      font-size: 11.5px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      padding: 4px 12px;
+      border-radius: 999px;
+      background: var(--accent-warm);
+      color: var(--accent-orange);
+      border: 1.5px solid rgba(235, 106, 32, 0.25);
+    }
+
+    /* Área Central dos Slides */
+    .stage {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px 48px;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      padding: 20px 64px 30px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      max-width: 1420px;
+      margin: 0 auto;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(14px) scale(0.99);
+      transition: opacity 0.35s ease, transform 0.35s ease;
+    }
+    .slide.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0) scale(1);
+    }
+
+    /* Rodapé de Navegação */
+    .nav-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 48px;
+      border-top: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      z-index: 50;
+    }
+    .nav-counter {
+      font-family: var(--font-mono);
+      font-size: 13.5px;
+      font-weight: 800;
+      color: var(--ink-soft);
+      letter-spacing: 0.06em;
+    }
+    .nav-hint {
+      font-size: 13px;
+      color: var(--ink-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .key-cap {
+      background: var(--bg-panel);
+      border: 1px solid var(--line-strong);
+      padding: 2px 7px;
+      border-radius: 6px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--ink);
+    }
+    .nav-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 22px;
+      border-radius: 999px;
+      font-family: var(--font-body);
+      font-size: 14.5px;
+      font-weight: 700;
+      border: 1.5px solid var(--line-strong);
+      background: var(--bg-card);
+      color: var(--ink);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      outline: none;
+    }
+    .btn:hover {
+      background: var(--bg-panel);
+      transform: translateY(-1px);
+    }
+    .btn.primary {
+      background: var(--accent-orange);
+      color: #fff;
+      border-color: var(--accent-orange);
+    }
+    .btn.primary:hover {
+      background: #D75811;
+      box-shadow: 0 4px 14px rgba(235, 106, 32, 0.35);
+    }
+    .btn.success {
+      background: var(--ifsc-green);
+      color: #fff;
+      border-color: var(--ifsc-green);
+    }
+    .btn.success:hover {
+      background: #007D2F;
+      box-shadow: 0 4px 14px rgba(0, 150, 57, 0.35);
+    }
+    .btn:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Tipografia dos Slides */
+    .kicker {
+      font-size: 13.5px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      color: var(--accent-orange);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .title-hero {
+      font-family: var(--font-head);
+      font-size: clamp(34px, 4.2vw, 56px);
+      font-weight: 900;
+      line-height: 1.08;
+      letter-spacing: -0.025em;
+      color: var(--ink);
+      margin-bottom: 12px;
+    }
+    .title-slide {
+      font-family: var(--font-head);
+      font-size: clamp(28px, 3vw, 42px);
+      font-weight: 900;
+      line-height: 1.14;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+      margin-bottom: 10px;
+    }
+    .lead-text {
+      font-size: clamp(16px, 1.3vw, 20px);
+      line-height: 1.55;
+      color: var(--ink-soft);
+      max-width: 860px;
+      margin-bottom: 22px;
+    }
+
+    /* Layouts Grid & Cards */
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    .grid-2-1 {
+      display: grid;
+      grid-template-columns: 1.35fr 1fr;
+      gap: 24px;
+    }
+    .card {
+      background: var(--bg-card);
+      border: 1.5px solid var(--line);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      position: relative;
+    }
+    .card:hover {
+      box-shadow: var(--shadow-md);
+    }
+    .card-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      margin-bottom: 14px;
+      background: var(--accent-warm);
+      color: var(--accent-orange);
+    }
+    .card h3 {
+      font-family: var(--font-head);
+      font-size: 19px;
+      font-weight: 800;
+      margin-bottom: 8px;
+      color: var(--ink);
+    }
+    .card p {
+      font-size: 15px;
+      line-height: 1.55;
+      color: var(--ink-soft);
+    }
+
+    /* Polaroids & Fotos */
+    .polaroid {
+      background: #FFFFFF;
+      padding: 12px 12px 38px;
+      border-radius: 6px;
+      box-shadow: var(--shadow-lg);
+      position: relative;
+      border: 1px solid var(--line);
+      transform: rotate(-1.2deg);
+      transition: transform 0.3s ease;
+    }
+    .polaroid:hover {
+      transform: rotate(0deg) scale(1.02);
+    }
+    .polaroid img {
+      width: 100%;
+      height: auto;
+      max-height: 380px;
+      object-fit: cover;
+      border-radius: 4px;
+      display: block;
+      background: #EDE8DE;
+    }
+    .polaroid-caption {
+      position: absolute;
+      bottom: 12px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--ink-soft);
+    }
+    .tape {
+      position: absolute;
+      top: -12px;
+      left: 35%;
+      width: 90px;
+      height: 26px;
+      background: rgba(246, 167, 9, 0.45);
+      border-radius: 2px;
+      backdrop-filter: blur(2px);
+      transform: rotate(2deg);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+
+    /* Simulador da Água (Slide 3) */
+    .pipe-water {
+      height: 26px;
+      border-radius: 999px;
+      background: #E2E8F0;
+      overflow: hidden;
+      position: relative;
+      border: 2px solid #CBD5E1;
+    }
+    .water-stream {
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, #38BDF8 0%, #0284C7 50%, #38BDF8 100%);
+      background-size: 60px 100%;
+      animation: waterFlow 1.2s linear infinite;
+      transition: opacity 0.3s, animation-duration 0.3s;
+    }
+    @keyframes waterFlow {
+      0% { background-position: 0 0; }
+      100% { background-position: 60px 0; }
+    }
+
+    /* Multímetro Lúdico (Slide 6) */
+    .multimeter-toy {
+      background: linear-gradient(145deg, #FF5252, #D32F2F);
+      border-radius: 28px;
+      padding: 24px;
+      box-shadow: 0 20px 40px -10px rgba(211, 47, 47, 0.45);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      border: 3px solid #B71C1C;
+    }
+    .lcd-toy {
+      background: #79A391;
+      border: 4px solid #1A252C;
+      border-radius: 12px;
+      padding: 16px 22px;
+      font-family: var(--font-mono);
+      font-size: 42px;
+      font-weight: 900;
+      color: #0E171E;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+      box-shadow: inset 0 2px 8px rgba(0,0,0,0.35);
+    }
+    .probe-btn-toy {
+      padding: 12px 20px;
+      border-radius: 999px;
+      background: #fff;
+      font-family: var(--font-head);
+      font-weight: 800;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.15s ease;
+      border: 2px solid #CBD5E1;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+    }
+    .probe-btn-toy:hover {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    }
+
+    /* Confetti Canvas */
+    #confettiCanvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 999;
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="confettiCanvas"></canvas>
+
+<div class="deck-container">
+  <!-- Barra de Progresso no Topo -->
+  <div class="top-progress">
+    <div class="top-progress-fill" id="progressFill"></div>
+  </div>
+
+  <!-- Topbar com Identidade Institucional e Lúdica -->
+  <header class="topbar">
+    <div class="topbar-brand">
+      <img src="../../midia/logo-ifsc-florianopolis.png" alt="IFSC" class="topbar-logo" onerror="this.style.display='none'">
+      <div class="topbar-title">
+        <span>🍟 Missão: Entre Fios &amp; Fritas</span>
+        <span style="color:var(--ink-muted)">•</span>
+        <span style="color:var(--ink-soft); font-weight:600;">IFSC Florianópolis</span>
+      </div>
+    </div>
+    <div>
+      <span class="badge-mission">Oficina de Engenharia Prática</span>
+    </div>
+  </header>
+
+  <!-- Palco dos Slides -->
+  <main class="stage">
+
+    <!-- ================= SLIDE 01: CAPA & O MISTÉRIO ================= -->
+    <section class="slide active" id="slide-1">
+      <div class="grid-2" style="align-items:center;">
+        <div>
+          <div class="kicker">
+            <span>🚨 Alerta na Cozinha da Engenharia</span>
+          </div>
+          <h1 class="title-hero">
+            Operação: <br>
+            <span style="color:var(--accent-orange);">Entre Fios &amp; Fritas!</span>
+          </h1>
+          <p class="lead-text">
+            Uma Air Fryer parou de funcionar e o almoço está por um fio! Sua equipe topa o desafio de desvendar a eletrônica, consertar o circuito e garantir as batatas fritas no final?
+          </p>
+
+          <div style="display:flex; gap:12px; margin-bottom:28px;">
+            <div style="background:var(--bg-card); border:1.5px solid var(--line); padding:10px 16px; border-radius:14px;">
+              <div style="font-size:11px; font-weight:800; color:var(--ink-muted); text-transform:uppercase;">MISSÃO</div>
+              <div style="font-size:14px; font-weight:800; color:var(--ink);">Detetives do Circuito</div>
+            </div>
+            <div style="background:var(--bg-card); border:1.5px solid var(--line); padding:10px 16px; border-radius:14px;">
+              <div style="font-size:11px; font-weight:800; color:var(--ink-muted); text-transform:uppercase;">SEGURANÇA</div>
+              <div style="font-size:14px; font-weight:800; color:var(--ifsc-green);">100% Baixa Tensão (12V)</div>
+            </div>
+            <div style="background:var(--bg-card); border:1.5px solid var(--line); padding:10px 16px; border-radius:14px;">
+              <div style="font-size:11px; font-weight:800; color:var(--ink-muted); text-transform:uppercase;">RECOMPENSA</div>
+              <div style="font-size:14px; font-weight:800; color:var(--accent-orange);">Batata Frita Quentinha 🍟</div>
+            </div>
+          </div>
+
+          <button class="btn primary" onclick="nextSlide()" style="font-size:16px; padding:12px 30px;">
+            Aceitar a Missão →
+          </button>
+        </div>
+
+        <div style="display:flex; justify-content:center; align-items:center;">
+          <div class="polaroid" style="max-width:440px;">
+            <div class="tape"></div>
+            <img src="../../midia/tinkercad-circuit.png" alt="Circuito da Missão" onerror="this.src='https://placehold.co/600x400/FFF2E0/EB6A20?text=Circuito+Air+Fryer'">
+            <div class="polaroid-caption">O Circuito que Vocês Vão Destrinchar!</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 02: O QUE TEM DENTRO DA AIR FRYER ================= -->
+    <section class="slide" id="slide-2">
+      <div class="kicker">02 • Raio-X do Aparelho</div>
+      <h2 class="title-slide">Não é Mágica, é Engenharia!</h2>
+      <p class="lead-text">Por fora ela parece um computador do futuro, mas por dentro são apenas 3 peças essenciais trabalhando em equipe:</p>
+
+      <div class="grid-3">
+        <div class="card" style="border-top:5px solid var(--ifsc-red);">
+          <div class="card-icon" style="background:#FEE2E2; color:var(--ifsc-red);">🔥</div>
+          <h3>1. A Resistência Elétrica</h3>
+          <p>O <strong>aquecedor</strong> da Air Fryer. É um fio especial de metal que fica em brasa quando os elétrons passam por ele — exatamente como o chuveiro elétrico da sua casa!</p>
+        </div>
+
+        <div class="card" style="border-top:5px solid var(--accent-blue);">
+          <div class="card-icon" style="background:#DBEAFE; color:var(--accent-blue);">🌪️</div>
+          <h3>2. A Ventoinha Turbo</h3>
+          <p>O <strong>soprador de ar</strong>. Um motor elétrico faz girar uma hélice a alta velocidade, criando um redemoinho de ar quente a 200 °C que assa a batata frita por todos os lados.</p>
+        </div>
+
+        <div class="card" style="border-top:5px solid var(--ifsc-green);">
+          <div class="card-icon" style="background:#DCFCE7; color:var(--ifsc-green);">🧠</div>
+          <h3>3. O Circuito de Comando</h3>
+          <p>O <strong>cérebro</strong> do sistema. É o interruptor, o temporizador e os fios que decidem quando ligar e desligar com segurança — e é exatamente ele que nós vamos consertar hoje!</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 03: [INTERATIVO] A ANALOGIA DA ÁGUA ================= -->
+    <section class="slide" id="slide-3">
+      <div class="kicker">03 • Eletricidade Descomplicada</div>
+      <h2 class="title-slide">Eletricidade é Igual à Água no Cano!</h2>
+      <p class="lead-text">Você não precisa enxergar os elétrons para entender como eles se comportam. Teste os botões abaixo e veja a mágica:</p>
+
+      <div class="grid-2-1">
+        <!-- Simulador Interativo -->
+        <div class="card" style="padding:24px;">
+          <div style="font-size:12px; font-weight:800; color:var(--ink-muted); margin-bottom:12px;">SIMULADOR DE VAZÃO &amp; CORRENTE</div>
+
+          <!-- O Cano com Água -->
+          <div style="margin-bottom:20px;">
+            <div style="display:flex; justify-content:space-between; font-size:13px; font-weight:700; color:var(--ink-soft); margin-bottom:6px;">
+              <span>CANO PRINCIPAL (CONDUTOR)</span>
+              <span id="waterStatusText" style="color:var(--accent-blue);">FLUXO NORMAL</span>
+            </div>
+            <div class="pipe-water">
+              <div class="water-stream" id="waterStream"></div>
+            </div>
+          </div>
+
+          <!-- Botoeiras de Controle -->
+          <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:16px;">
+            <button class="btn" id="waterBtnNormal" onclick="setWaterMode('normal')">🚰 Registro Aberto</button>
+            <button class="btn" id="waterBtnResist" onclick="setWaterMode('resist')">🤏 Cano Apertado (Resistor)</button>
+            <button class="btn" id="waterBtnCut" onclick="setWaterMode('cut')">🚫 Cano Quebrado (Aberto)</button>
+          </div>
+
+          <div style="background:var(--bg-panel); border-radius:12px; padding:14px; font-family:var(--font-mono); font-size:13px;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+              <span>Pressão (Tensão / Volts):</span>
+              <strong id="liveVoltsTxt" style="color:var(--ink);">12 V</strong>
+            </div>
+            <div style="display:flex; justify-content:space-between;">
+              <span>Vazão (Corrente / Amperes):</span>
+              <strong id="liveAmpsTxt" style="color:var(--ink);">Forte e Contínua</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Explicação Amigável -->
+        <div class="card" style="display:flex; flex-direction:column; justify-content:center;">
+          <h3 style="font-size:20px; color:var(--accent-orange); margin-bottom:12px;">A Tríade dos Circuitos:</h3>
+          <ul style="list-style:none; display:flex; flex-direction:column; gap:14px; font-size:15px; color:var(--ink-soft);">
+            <li>
+              <strong style="color:var(--ink);">⚡ Tensão (Volts):</strong> É o "empurrão", a força da caixa d'água querendo descer.
+            </li>
+            <li>
+              <strong style="color:var(--ink);">🌊 Corrente (Amperes):</strong> É a quantidade de água (elétrons) que realmente passa pelo cano.
+            </li>
+            <li>
+              <strong style="color:var(--ink);">🧱 Resistência (Ohms):</strong> É o cano apertado, a torneira ou o obstáculo que controla o fluxo.
+            </li>
+            <li style="background:var(--accent-warm); padding:10px 14px; border-radius:10px; color:var(--accent-orange); font-weight:700;">
+              💡 Regra de Ouro: Cano quebrado = nada passa! O circuito precisa de um caminho completo fechado para funcionar.
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 04: SEGURANÇA ELÉTRICA ================= -->
+    <section class="slide" id="slide-4">
+      <div class="kicker">04 • Segurança Máxima</div>
+      <h2 class="title-slide">A Regra de Ouro da Bancada</h2>
+      <p class="lead-text">Na engenharia e na vida, a segurança vem sempre em primeiro lugar. Veja a diferença:</p>
+
+      <div class="grid-2">
+        <div class="card" style="border-left:6px solid var(--ifsc-green);">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <h3 style="color:var(--ifsc-green);">🟢 O que Vocês Vão Tocar: 12V DC</h3>
+            <span class="badge-mission" style="background:#DCFCE7; color:var(--ifsc-green); border:none;">SEGURO AO TOQUE</span>
+          </div>
+          <p style="margin-bottom:14px;">A protoboard opera em <strong>baixa tensão contínua</strong>, similar a uma bateria de brinquedo:</p>
+          <ul style="list-style:none; display:flex; flex-direction:column; gap:10px; font-size:15px; color:var(--ink-soft);">
+            <li>✓ Pode pegar nos fios e componentes com as mãos sem nenhum receio.</li>
+            <li>✓ Não dá choque e não queima a pele.</li>
+            <li>✓ Ideal para aprender, errar, trocar peças e descobrir sem medo!</li>
+          </ul>
+        </div>
+
+        <div class="card" style="border-left:6px solid var(--ifsc-red); background:#FFFDFD;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <h3 style="color:var(--ifsc-red);">🔴 A Tomada de Casa: 220V AC</h3>
+            <span class="badge-mission" style="background:#FEE2E2; color:var(--ifsc-red); border:none;">PERIGO REAL</span>
+          </div>
+          <p style="margin-bottom:14px;">A rede da tomada tem força suficiente para causar queimaduras e acidentes graves:</p>
+          <ul style="list-style:none; display:flex; flex-direction:column; gap:10px; font-size:15px; color:var(--ink-soft);">
+            <li>🔒 <strong>Na nossa oficina:</strong> ela fica trancada em uma caixa isolada que vocês NÃO tocam.</li>
+            <li>⚠️ <strong>Na sua casa:</strong> nunca desmonte eletrodomésticos ligados à tomada ou com o chão molhado.</li>
+            <li>🛠️ Viu faísca ou cheiro estranho? Peça ajuda a um adulto ou leve na assistência técnica!</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 05: O GUIA DOS COMPONENTES ================= -->
+    <section class="slide" id="slide-5">
+      <div class="kicker">05 • Caixa de Ferramentas</div>
+      <h2 class="title-slide">Os 4 Heróis da Sua Bancada</h2>
+      <p class="lead-text">Você vai encontrar estas 4 peças no kit da sua equipe. Conheça cada uma delas:</p>
+
+      <div class="grid-4">
+        <div class="card" style="text-align:center;">
+          <div class="card-icon" style="margin:0 auto 14px; background:#F1F5F9; color:#475569;">🧱</div>
+          <h3 style="font-size:17px;">Protoboard</h3>
+          <p style="font-size:14px;">O <em>Lego da Eletrônica</em>! Uma placa cheia de furinhos conectados por dentro em trilhas. Permite montar circuitos sem precisar de solda.</p>
+        </div>
+
+        <div class="card" style="text-align:center;">
+          <div class="card-icon" style="margin:0 auto 14px; background:#FEF3C7; color:#D97706;">💡</div>
+          <h3 style="font-size:17px;">LED Indicador</h3>
+          <p style="font-size:14px;">Uma lâmpadazinha esperta! Ela só acende se for colocada do lado certo: a perninha mais comprida vai no polo positivo (+).</p>
+        </div>
+
+        <div class="card" style="text-align:center;">
+          <div class="card-icon" style="margin:0 auto 14px; background:#EDE9FE; color:#7C3AED;">🛡️</div>
+          <h3 style="font-size:17px;">Resistor</h3>
+          <p style="font-size:14px;">O <em>Guarda de Trânsito</em>! Ele freia o excesso de elétrons para proteger o LED e não deixar nada queimar. Tem listrinhas coloridas.</p>
+        </div>
+
+        <div class="card" style="text-align:center;">
+          <div class="card-icon" style="margin:0 auto 14px; background:#DCFCE7; color:var(--ifsc-green);">🔘</div>
+          <h3 style="font-size:17px;">Interruptor</h3>
+          <p style="font-size:14px;">A <em>Ponte Levadiça</em>! Quando apertado, fecha o caminho e deixa a corrente passar. Quando solto, abre o circuito e desliga.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 06: [INTERATIVO] O MULTÍMETRO & SOM DE BIP ================= -->
+    <section class="slide" id="slide-6">
+      <div class="kicker">06 • A Arma Secreta do Técnico</div>
+      <h2 class="title-slide">O Multímetro: Seu Estetoscópio Eletrônico</h2>
+      <p class="lead-text">Como os engenheiros descobrem se um fio está quebrado por dentro sem cortar o plástico? Eles ouvem o circuito!</p>
+
+      <div class="grid-2-1">
+        <!-- Simulador do Multímetro -->
+        <div class="card" style="padding:22px;">
+          <div style="font-size:12px; font-weight:800; color:var(--ink-muted); margin-bottom:12px;">TESTE DE CONTINUIDADE SONORA</div>
+
+          <!-- O Multímetro Virtual -->
+          <div class="multimeter-toy">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-family:var(--font-mono); font-size:12px; font-weight:800; letter-spacing:0.1em; opacity:0.9;">MULTÍMETRO DIGITAL • MODO BIP 🔊</span>
+              <span id="toyBuzzer" style="font-size:22px; opacity:0.3;">🔔</span>
+            </div>
+            <div class="lcd-toy">
+              <span id="toyDisplay">O.L</span>
+              <span style="font-size:20px; font-weight:700;">Ω</span>
+            </div>
+            <div style="font-size:12.5px; opacity:0.9; text-align:center;">
+              Clique nos cabos abaixo para encostar as pontas de prova virtuais:
+            </div>
+          </div>
+
+          <!-- Cabos para Testar -->
+          <div style="display:flex; flex-direction:column; gap:10px; margin-top:16px;">
+            <button class="probe-btn-toy" onclick="testToyCable('bom')">
+              <span style="color:#009639; font-size:18px;">🟢</span> Cabo 1: Fio Perfeito &amp; Conectado
+            </button>
+            <button class="probe-btn-toy" onclick="testToyCable('rompido')">
+              <span style="color:#C8102E; font-size:18px;">🔴</span> Cabo 2: Fio Rompido por Dentro
+            </button>
+            <button class="probe-btn-toy" onclick="testToyCable('resistor')">
+              <span style="color:#7C3AED; font-size:18px;">🟣</span> Cabo 3: Resistor de Proteção (1.000 Ω)
+            </button>
+          </div>
+        </div>
+
+        <!-- Regra do Jogo -->
+        <div class="card" style="display:flex; flex-direction:column; justify-content:center;">
+          <h3 style="font-size:20px; color:var(--accent-orange); margin-bottom:10px;">Como Interpretar o Som:</h3>
+          <div style="display:flex; flex-direction:column; gap:14px; font-size:15px; color:var(--ink-soft);">
+            <div style="background:#DCFCE7; padding:12px 16px; border-radius:12px; color:#065F46;">
+              <strong>🔊 BIP CONTÍNUO (0.00 Ω):</strong> O caminho está livre! Os elétrons conseguem passar sem obstáculo.
+            </div>
+            <div style="background:#FEE2E2; padding:12px 16px; border-radius:12px; color:#991B1B;">
+              <strong>🔇 SILÊNCIO TOTAL (O.L):</strong> Circuito aberto! Tem um fio solto, desconectado ou quebrado no meio do caminho.
+            </div>
+            <p style="line-height:1.55;">
+              Na sua bancada, você vai usar essa mesma técnica para testar nó por nó e achar o defeito secreto da sua Air Fryer!
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 07: O RITUAL DA CAIXA DIDÁTICA ================= -->
+    <section class="slide" id="slide-7">
+      <div class="kicker">07 • Mãos à Obra</div>
+      <h2 class="title-slide">O Ritual: Abrir para Descobrir!</h2>
+      <p class="lead-text">Chega de teoria na tela! Chegou a hora de pegar as ferramentas e agir como técnicos de verdade:</p>
+
+      <div class="grid-3">
+        <div class="card">
+          <div class="card-icon" style="background:#FEF3C7; color:#D97706;">🪛</div>
+          <h3>Passo 1: Desparafusar</h3>
+          <p>Pegue a chave de fenda e retire com cuidado os 4 parafusos externos que fecham a caixa didática da sua bancada.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-icon" style="background:#E0E7FF; color:#4338CA;">🏺</div>
+          <h3>Passo 2: Guardar as Peças</h3>
+          <p>Coloque os parafusos no potinho da equipe. Técnico organizado nunca perde parafuso nem deixa ferramenta espalhada!</p>
+        </div>
+
+        <div class="card">
+          <div class="card-icon" style="background:#DCFCE7; color:var(--ifsc-green);">🗺️</div>
+          <h3>Passo 3: O Mapa do Circuito</h3>
+          <p>Abra a tampa e retire o <strong>Manual de Manutenção</strong> da equipe. Ele contém o esquemático original para vocês compararem!</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 08: OS 4 ESQUADRÕES ================= -->
+    <section class="slide" id="slide-8">
+      <div class="kicker">08 • Os Desafios Secretos</div>
+      <h2 class="title-slide">Qual é a Missão da Sua Equipe?</h2>
+      <p class="lead-text">Cada bancada recebeu o mesmo circuito básico, mas com um enigma diferente para desvendar:</p>
+
+      <!-- Seletor dos Esquadrões -->
+      <div style="display:flex; gap:10px; margin-bottom:16px;">
+        <button class="btn primary" id="squadTab0" onclick="selectSquad(0)">Bancada 1: O LED Teimoso</button>
+        <button class="btn" id="squadTab1" onclick="selectSquad(1)">Bancada 2: O Fio Deslocado</button>
+        <button class="btn" id="squadTab2" onclick="selectSquad(2)">Bancada 3: O Resistor Partido</button>
+        <button class="btn" id="squadTab3" onclick="selectSquad(3)">Bancada 4: A Chave Solta</button>
+      </div>
+
+      <!-- Detalhes do Esquadrão Ativo -->
+      <div class="card" id="squadCard">
+        <div style="font-size:12px; font-weight:800; color:var(--accent-orange); margin-bottom:4px;" id="squadTag">ENIGMA DA BANCADA 1</div>
+        <h3 style="font-size:22px; margin-bottom:8px;" id="squadTitle">O Mistério do LED que Não Acende</h3>
+        <p style="font-size:16px; line-height:1.6; color:var(--ink-soft); margin-bottom:14px;" id="squadDesc">
+          O circuito parece montado certinho, mas quando você aperta o botão, nada acontece! Dica de detetive: lembre-se que o LED é uma via de mão única e tem polaridade certa (perninha longa vs perninha curta).
+        </p>
+        <div style="background:var(--bg-panel); border-radius:12px; padding:14px; font-size:14.5px; color:var(--ink);">
+          🎯 <strong>Missão do Grupo:</strong> Usem o multímetro para testar se a corrente está conseguindo passar pelo LED. Se estiver travando, invertam a posição dele na protoboard!
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 09: O SEGREDO DO RELÉ ================= -->
+    <section class="slide" id="slide-9">
+      <div class="kicker">09 • O Segredo da Engenharia</div>
+      <h2 class="title-slide">Como 12V Ligam um Forno de 220V?</h2>
+      <p class="lead-text">Vocês perceberam o truque? A mão de vocês mexeu apenas em 12V inofensivos... Então como a Air Fryer ligou de verdade?</p>
+
+      <div class="grid-2" style="align-items:center;">
+        <div class="card">
+          <div class="card-icon" style="background:#FFF3E5; color:var(--accent-orange);">💡⚡</div>
+          <h3>O Relé de Estado Sólido (SSR)</h3>
+          <p style="margin-bottom:12px;">
+            O circuito de vocês acionou uma peça genial chamada <strong>Relé de Estado Sólido</strong>.
+          </p>
+          <p style="margin-bottom:12px;">
+            Ele funciona como uma chave invisível operada por luz: quando os 12V da sua protoboard fecham, uma luz infravermelha minúscula acende dentro de um chip lacrado.
+          </p>
+          <p>
+            Essa luz é detectada por um sensor que fecha a rede pesada de 220V, sem que a alta tensão NUNCA encoste na sua mão!
+          </p>
+        </div>
+
+        <div class="card" style="background:var(--accent-warm); border-color:rgba(235,106,32,0.3);">
+          <h3 style="color:var(--accent-orange); margin-bottom:10px;">🚀 Onde Isso é Usado no Mundo?</h3>
+          <ul style="list-style:none; display:flex; flex-direction:column; gap:12px; font-size:15px; color:var(--ink);">
+            <li>🤖 <strong>Em Robôs Industriais:</strong> O computador de comando liga motores pesados de fábricas.</li>
+            <li>🚗 <strong>Em Carros Elétricos:</strong> O painel digital do motorista comanda a bateria de 400V das rodas.</li>
+            <li>🛰️ <strong>Em Satélites e Foguetes:</strong> Placas delicadas acionam propulsores no espaço.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 10: MISSÃO CUMPRIDA & BATATAS ================= -->
+    <section class="slide" id="slide-10">
+      <div style="text-align:center; max-width:900px; margin:0 auto;">
+        <div class="kicker" style="justify-content:center;">
+          <span>🎉 MISSÃO CUMPRIDA COM SUCESSO!</span>
+        </div>
+        <h2 class="title-hero" style="font-size:46px; margin-bottom:14px;">
+          Parabéns, Novos Engenheiros! 🍟
+        </h2>
+        <p class="lead-text" style="margin:0 auto 26px; font-size:18px;">
+          Todos os 4 circuitos foram corrigidos! A Air Fryer ligou, o aquecedor entrou em ação e a recompensa está pronta e estalando de quente!
+        </p>
+
+        <div style="display:flex; justify-content:center; gap:16px; margin-bottom:28px;">
+          <button class="btn success" onclick="triggerConfetti()" style="font-size:17px; padding:14px 34px;">
+            🍟 Celebrar Conserto com Batata Frita!
+          </button>
+          <button class="btn" onclick="goToSlide(0)" style="font-size:15px;">
+            ↺ Voltar ao Início
+          </button>
+        </div>
+
+        <div class="card" style="background:#FFFFFF; text-align:left; padding:20px 28px; border-radius:18px;">
+          <h3 style="font-size:18px; color:var(--ifsc-green); margin-bottom:6px;">Gostou da Experiência? Seu Futuro Pode Ser no IFSC!</h3>
+          <p style="font-size:14.5px; color:var(--ink-soft); line-height:1.5;">
+            O Instituto Federal de Santa Catarina (IFSC - Campus Florianópolis) oferece <strong>Cursos Técnicos Integrados e Graduação em Engenharia Mecatrônica 100% gratuitos</strong>. Venha aprender robótica, automação, circuitos e transformar a tecnologia do país com a gente!
+          </p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Rodapé com Navegação -->
+  <footer class="nav-bar">
+    <div class="nav-counter" id="slideCounter">01 / 10</div>
+    <div class="nav-hint">
+      Use as setas <span class="key-cap">←</span> <span class="key-cap">→</span> ou <span class="key-cap">Espaço</span> para navegar • Tecla <span class="key-cap">F</span> Tela Cheia
+    </div>
+    <div class="nav-controls">
+      <button class="btn" id="prevBtn" onclick="prevSlide()" disabled>← Anterior</button>
+      <button class="btn primary" id="nextBtn" onclick="nextSlide()">Próximo →</button>
+      <button class="btn" onclick="toggleFullscreen()" title="Alternar Tela Cheia">⛶</button>
+    </div>
+  </footer>
+</div>
+
+<script>
+  /* ================= ESTADO DA APRESENTAÇÃO ================= */
+  const totalSlides = 10;
+  let currentSlide = 0;
+
+  function updateDeck() {
+    document.querySelectorAll('.slide').forEach((s, idx) => {
+      s.classList.toggle('active', idx === currentSlide);
+    });
+
+    const pct = ((currentSlide + 1) / totalSlides) * 100;
+    document.getElementById('progressFill').style.width = pct + '%';
+
+    const currentStr = String(currentSlide + 1).padStart(2, '0');
+    const totalStr = String(totalSlides).padStart(2, '0');
+    document.getElementById('slideCounter').textContent = `${currentStr} / ${totalStr}`;
+
+    document.getElementById('prevBtn').disabled = currentSlide === 0;
+    const nextBtn = document.getElementById('nextBtn');
+    if (currentSlide === totalSlides - 1) {
+      nextBtn.textContent = 'Fritas Liberadas! 🍟';
+    } else {
+      nextBtn.textContent = 'Próximo →';
+    }
+  }
+
+  function nextSlide() {
+    if (currentSlide < totalSlides - 1) {
+      currentSlide++;
+      updateDeck();
+    }
+  }
+
+  function prevSlide() {
+    if (currentSlide > 0) {
+      currentSlide--;
+      updateDeck();
+    }
+  }
+
+  function goToSlide(idx) {
+    if (idx >= 0 && idx < totalSlides) {
+      currentSlide = idx;
+      updateDeck();
+    }
+  }
+
+  /* Teclado */
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+      e.preventDefault();
+      nextSlide();
+    } else if (e.key === 'ArrowLeft' || e.key === 'PageUp' || e.key === 'Backspace') {
+      e.preventDefault();
+      prevSlide();
+    } else if (e.key === 'Home') {
+      e.preventDefault();
+      goToSlide(0);
+    } else if (e.key === 'End') {
+      e.preventDefault();
+      goToSlide(totalSlides - 1);
+    } else if (e.key.toLowerCase() === 'f') {
+      toggleFullscreen();
+    }
+  });
+
+  function toggleFullscreen() {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(() => {});
+    } else {
+      document.exitFullscreen().catch(() => {});
+    }
+  }
+
+  /* ================= ÁUDIO (BEEP DO MULTÍMETRO) ================= */
+  const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  function playBeep(freq = 2200, duration = 0.28) {
+    try {
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+      gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + duration);
+    } catch(e) {}
+  }
+
+  /* ================= SLIDE 3: SIMULADOR DA ÁGUA ================= */
+  function setWaterMode(mode) {
+    const stream = document.getElementById('waterStream');
+    const statusTxt = document.getElementById('waterStatusText');
+    const voltTxt = document.getElementById('liveVoltsTxt');
+    const ampTxt = document.getElementById('liveAmpsTxt');
+
+    document.getElementById('waterBtnNormal').classList.toggle('primary', mode === 'normal');
+    document.getElementById('waterBtnResist').classList.toggle('primary', mode === 'resist');
+    document.getElementById('waterBtnCut').classList.toggle('primary', mode === 'cut');
+
+    if (mode === 'normal') {
+      stream.style.opacity = '1';
+      stream.style.animationDuration = '1.0s';
+      stream.style.height = '100%';
+      statusTxt.textContent = 'REGISTRO ABERTO (FLUXO LIVRE)';
+      statusTxt.style.color = '#0284C7';
+      voltTxt.textContent = '12 V (Pressão Total)';
+      ampTxt.textContent = 'Forte & Contínua (15 mA)';
+    } else if (mode === 'resist') {
+      stream.style.opacity = '0.7';
+      stream.style.animationDuration = '2.8s';
+      stream.style.height = '40%';
+      statusTxt.textContent = 'CANO APERTADO (RESISTOR CONTROLANDO)';
+      statusTxt.style.color = '#7C3AED';
+      voltTxt.textContent = '12 V (Pressão Mantida)';
+      ampTxt.textContent = 'Reduzida com Segurança (5 mA)';
+    } else if (mode === 'cut') {
+      stream.style.opacity = '0';
+      statusTxt.textContent = 'CIRCUITO ABERTO (FLUXO INTERROMPIDO)';
+      statusTxt.style.color = '#DC2626';
+      voltTxt.textContent = '12 V (Sem passagem)';
+      ampTxt.textContent = 'ZERO (Nada passa!)';
+    }
+  }
+  setWaterMode('normal');
+
+  /* ================= SLIDE 6: MULTÍMETRO DOS ALUNOS ================= */
+  function testToyCable(tipo) {
+    const display = document.getElementById('toyDisplay');
+    const buzzer = document.getElementById('toyBuzzer');
+
+    if (tipo === 'bom') {
+      display.textContent = '0.00';
+      buzzer.style.opacity = '1';
+      playBeep(2200, 0.35); // Bip clássico
+    } else if (tipo === 'rompido') {
+      display.textContent = 'O.L';
+      buzzer.style.opacity = '0.3';
+    } else if (tipo === 'resistor') {
+      display.textContent = '1000';
+      buzzer.style.opacity = '0.3';
+      playBeep(800, 0.1); // Tom curto e baixo indicando leitura
+    }
+  }
+
+  /* ================= SLIDE 8: SELETOR DOS 4 ESQUADRÕES ================= */
+  const squads = [
+    {
+      tabId: 'squadTab0',
+      tag: 'ENIGMA DA BANCADA 1',
+      title: 'O Mistério do LED que Não Acende',
+      desc: 'O circuito parece idêntico ao esquema, mas quando você aperta o interruptor, nada acontece! Dica de detetive: lembre-se que o LED é uma lâmpada especial que só deixa a eletricidade passar em uma direção. Ele tem um lado positivo (perna longa) e um lado negativo (perna curta e chanfro).',
+      missao: '🎯 Missão do Grupo: Usem o multímetro para testar se há corrente no LED. Se ele estiver invertido, basta puxar com cuidado da protoboard e inverter os terminais!'
+    },
+    {
+      tabId: 'squadTab1',
+      tag: 'ENIGMA DA BANCADA 2',
+      title: 'O Caso do Fio Deslocado na Matriz',
+      desc: 'Os componentes estão todos lá, mas o circuito está silencioso e inerte! Lembrem-se de como a protoboard funciona por dentro: os furinhos só se comunicam se estiverem na mesma fileira.',
+      missao: '🎯 Missão do Grupo: Testem continuidade entre a perna do resistor e o cabo de alimentação. Procurem um jumper espetado no buraquinho ao lado!'
+    },
+    {
+      tabId: 'squadTab2',
+      tag: 'ENIGMA DA BANCADA 3',
+      title: 'O Resistor com Defeito Oculto',
+      desc: 'Um resistor quebrou internamente, comportando-se exatamente como um fusível térmico que queima quando a Air Fryer superaquece em casa.',
+      missao: '🎯 Missão do Grupo: Coloquem as pontas de prova nas duas pernas do resistor. Se o visor marcar O.L (infinito), o resistor abriu! Substituam pelo resistor novo do kit.'
+    },
+    {
+      tabId: 'squadTab3',
+      tag: 'ENIGMA DA BANCADA 4',
+      title: 'A Chave Desconectada do Comando',
+      desc: 'O botão de comando foi encaixado, mas um dos cabos de sinal escapou ou está em um pino sem contato interno.',
+      missao: '🎯 Missão do Grupo: Meçam a chave nos dois estados (apertada e solta). Ao achar onde a linha se perdeu, reconectem o jumper e fechem o comando!'
+    }
+  ];
+
+  function selectSquad(idx) {
+    squads.forEach((s, i) => {
+      document.getElementById(s.tabId).classList.toggle('primary', i === idx);
+    });
+    const s = squads[idx];
+    document.getElementById('squadTag').textContent = s.tag;
+    document.getElementById('squadTitle').textContent = s.title;
+    document.getElementById('squadDesc').textContent = s.desc;
+    document.getElementById('squadCard').querySelector('div:last-child').innerHTML = s.missao;
+  }
+
+  /* ================= CONFETTI & FANFARRA ================= */
+  function triggerConfetti() {
+    // Fanfarra alegre com Web Audio API
+    playBeep(523.25, 0.15); // Dó
+    setTimeout(() => playBeep(659.25, 0.15), 120); // Mi
+    setTimeout(() => playBeep(783.99, 0.25), 240); // Sol
+    setTimeout(() => playBeep(1046.50, 0.45), 380); // Dó agudo
+
+    const canvas = document.getElementById('confettiCanvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const pieces = [];
+    const colors = ['#EB6A20', '#F6A709', '#009639', '#C8102E', '#FBBF24', '#3B82F6', '#8B5CF6'];
+
+    for (let i = 0; i < 110; i++) {
+      pieces.push({
+        x: canvas.width / 2,
+        y: canvas.height / 2,
+        w: Math.random() * 12 + 6,
+        h: Math.random() * 8 + 4,
+        vx: (Math.random() - 0.5) * 20,
+        vy: (Math.random() - 0.7) * 24,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        rotation: Math.random() * 360,
+        vr: (Math.random() - 0.5) * 14
+      });
+    }
+
+    let frame = 0;
+    function anim() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      pieces.forEach(p => {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.48;
+        p.rotation += p.vr;
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate((p.rotation * Math.PI) / 180);
+        ctx.fillStyle = p.color;
+        ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+        ctx.restore();
+      });
+
+      frame++;
+      if (frame < 130) {
+        requestAnimationFrame(anim);
+      } else {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+    }
+    anim();
+  }
+
+  // Inicialização
+  updateDeck();
+</script>
+
+</body>
+</html>

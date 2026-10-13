@@ -63,9 +63,10 @@ extensao-engenharia-sociedade/
 │   │   ├── projeto-extensao-curricular-air-fryer.md
 │   │   └── acao-extensao-circuitos-basicos.md
 │   ├── 02-manual-desenvolvimento/         # Manual conceitual e guia completo de replicação
-│   └── 03-apresentacao/                   # Roteiro e slides para apresentação da disciplina
-│       ├── roteiro-apresentacao-v2.md
-│       └── slides/
+│   └── 03-apresentacao/                   # Apresentações interativas em HTML e roteiros
+│       ├── apresentacao-entre-fios-e-fritas.html  # Versão acadêmica/disciplina IFSC (11 slides)
+│       ├── apresentacao-alunos-fios-e-fritas.html # Versão lúdica para os estudantes (10 slides)
+│       └── roteiro-apresentacao-v2.md
 │
 ├── hardware/                              # Projeto elétrico, esquemáticos e mecânica
 │   ├── esquematicos/                      # Diagramas oficiais e protótipos em PDF
