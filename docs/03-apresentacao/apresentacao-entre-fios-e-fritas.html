@@ -1,0 +1,1342 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Entre Fios e Fritas — IFSC Mecatrônica</title>
+  
+  <!-- Tipografia Moderna -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;500;600;700;800;900&family=Source+Sans+3:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #FAF9F5;
+      --bg-card: #FFFFFF;
+      --bg-panel: #F5F2EB;
+      --line: #E8E2D5;
+      --line-strong: #D6CEBE;
+      --ink: #191B1D;
+      --ink-soft: #4A5056;
+      --ink-muted: #7E868E;
+      
+      /* Identidade do Projeto: IFSC + Gastronomia & Eletrônica */
+      --ifsc-green: #009639;
+      --ifsc-red: #C8102E;
+      --accent-orange: #EB6A20;
+      --accent-yellow: #F6A709;
+      --accent-warm: #FFF3E5;
+      --accent-teal: #0D9488;
+      
+      --font-head: 'Libre Franklin', -apple-system, sans-serif;
+      --font-body: 'Source Sans 3', -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      
+      --shadow-sm: 0 2px 8px rgba(25, 27, 29, 0.04);
+      --shadow-md: 0 10px 24px -8px rgba(25, 27, 29, 0.08);
+      --shadow-lg: 0 20px 40px -15px rgba(25, 27, 29, 0.12);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      width: 100%;
+      height: 100%;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--font-body);
+      overflow: hidden;
+      user-select: none;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Container Principal da Apresentação */
+    .deck-container {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      background: radial-gradient(1200px 700px at 90% -10%, var(--accent-warm) 0%, transparent 60%), var(--bg);
+    }
+
+    /* Barra de Progresso Superior */
+    .top-progress {
+      height: 5px;
+      width: 100%;
+      background: var(--line);
+      position: relative;
+      z-index: 100;
+    }
+    .top-progress-fill {
+      height: 100%;
+      width: 9.09%;
+      background: linear-gradient(90deg, var(--ifsc-green) 0%, var(--accent-yellow) 50%, var(--accent-orange) 100%);
+      transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Topbar com Logo e Identificação */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 36px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(8px);
+      z-index: 50;
+    }
+    .topbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .topbar-logo {
+      height: 28px;
+      width: auto;
+      object-fit: contain;
+    }
+    .topbar-title {
+      font-family: var(--font-head);
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .badge-tag {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: var(--accent-warm);
+      color: var(--accent-orange);
+      border: 1px solid rgba(235, 106, 32, 0.2);
+    }
+
+    /* Área de Slides */
+    .stage {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 48px;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      padding: 24px 64px 32px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      max-width: 1400px;
+      margin: 0 auto;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(12px) scale(0.995);
+      transition: opacity 0.35s ease, transform 0.35s ease;
+    }
+    .slide.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0) scale(1);
+    }
+
+    /* Barra de Navegação Inferior */
+    .nav-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 48px;
+      border-top: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(10px);
+      z-index: 50;
+    }
+    .nav-counter {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--ink-soft);
+      letter-spacing: 0.05em;
+    }
+    .nav-hint {
+      font-size: 13px;
+      color: var(--ink-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .key-cap {
+      background: var(--bg-panel);
+      border: 1px solid var(--line-strong);
+      padding: 2px 7px;
+      border-radius: 5px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--ink);
+    }
+    .nav-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 20px;
+      border-radius: 999px;
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 600;
+      border: 1.5px solid var(--line-strong);
+      background: var(--bg-card);
+      color: var(--ink);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      outline: none;
+    }
+    .btn:hover {
+      background: var(--bg-panel);
+      transform: translateY(-1px);
+    }
+    .btn.primary {
+      background: var(--accent-orange);
+      color: #fff;
+      border-color: var(--accent-orange);
+    }
+    .btn.primary:hover {
+      background: #D85912;
+      box-shadow: 0 4px 12px rgba(235, 106, 32, 0.3);
+    }
+    .btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Tipografia dos Slides */
+    .kicker {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent-orange);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .title-hero {
+      font-family: var(--font-head);
+      font-size: clamp(34px, 4vw, 56px);
+      font-weight: 900;
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+      margin-bottom: 14px;
+    }
+    .title-slide {
+      font-family: var(--font-head);
+      font-size: clamp(26px, 2.8vw, 40px);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.015em;
+      color: var(--ink);
+      margin-bottom: 12px;
+    }
+    .lead-text {
+      font-size: clamp(16px, 1.3vw, 20px);
+      line-height: 1.55;
+      color: var(--ink-soft);
+      max-width: 820px;
+      margin-bottom: 24px;
+    }
+
+    /* Componentes Compartilhados: Cards, Grids */
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    .grid-2-1 {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 24px;
+    }
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      position: relative;
+    }
+    .card:hover {
+      box-shadow: var(--shadow-md);
+    }
+    .card-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      margin-bottom: 14px;
+      background: var(--accent-warm);
+      color: var(--accent-orange);
+    }
+    .card h3 {
+      font-family: var(--font-head);
+      font-size: 19px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--ink);
+    }
+    .card p {
+      font-size: 15px;
+      line-height: 1.55;
+      color: var(--ink-soft);
+    }
+
+    /* Polaroids & Mídia */
+    .polaroid {
+      background: #FFFFFF;
+      padding: 12px 12px 38px;
+      border-radius: 4px;
+      box-shadow: var(--shadow-lg);
+      position: relative;
+      transform: rotate(-1.5deg);
+      border: 1px solid var(--line);
+      transition: transform 0.3s ease;
+    }
+    .polaroid:hover {
+      transform: rotate(0deg) scale(1.02);
+    }
+    .polaroid img {
+      width: 100%;
+      height: auto;
+      max-height: 380px;
+      object-fit: cover;
+      border-radius: 2px;
+      display: block;
+      background: #EAE6DF;
+    }
+    .polaroid-caption {
+      position: absolute;
+      bottom: 12px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--ink-soft);
+      letter-spacing: 0.02em;
+    }
+    .tape {
+      position: absolute;
+      top: -12px;
+      left: 35%;
+      width: 90px;
+      height: 26px;
+      background: rgba(246, 167, 9, 0.45);
+      border-radius: 2px;
+      backdrop-filter: blur(2px);
+      transform: rotate(2deg);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+
+    /* Animações de Circuito (Corrente Elétrica) */
+    @keyframes flowDash {
+      to { stroke-dashoffset: -40; }
+    }
+    .current-flow {
+      stroke-dasharray: 8 6;
+      stroke-dashoffset: 0;
+      animation: flowDash 1.8s linear infinite;
+    }
+    .led-glow {
+      filter: drop-shadow(0 0 16px #10B981);
+      transition: filter 0.3s ease;
+    }
+    .led-off {
+      filter: none;
+      opacity: 0.3;
+    }
+
+    /* Stepper Interativo (Tela 4) */
+    .stepper-nav {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .step-tab {
+      flex: 1;
+      padding: 14px 18px;
+      border-radius: 12px;
+      background: var(--bg-card);
+      border: 1.5px solid var(--line);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: left;
+    }
+    .step-tab.active {
+      border-color: var(--accent-orange);
+      background: var(--accent-warm);
+      box-shadow: 0 4px 14px rgba(235, 106, 32, 0.15);
+    }
+    .step-tab-num {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent-orange);
+      margin-bottom: 4px;
+    }
+    .step-tab-title {
+      font-family: var(--font-head);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    /* Simulador de Multímetro (Tela 7) */
+    .multimeter-box {
+      background: #F43F5E;
+      background: linear-gradient(145deg, #E11D48, #BE123C);
+      border-radius: 26px;
+      padding: 24px;
+      box-shadow: 0 20px 40px -10px rgba(190, 18, 60, 0.4);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      position: relative;
+    }
+    .multimeter-lcd {
+      background: #86A397;
+      border: 4px solid #1E293B;
+      border-radius: 10px;
+      padding: 16px 20px;
+      font-family: var(--font-mono);
+      font-size: 38px;
+      font-weight: 800;
+      color: #0F172A;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      text-shadow: 0 1px 1px rgba(0,0,0,0.15);
+      box-shadow: inset 0 2px 6px rgba(0,0,0,0.3);
+    }
+    .lcd-unit {
+      font-size: 18px;
+      font-weight: 600;
+      opacity: 0.8;
+    }
+    .test-probe-btn {
+      padding: 10px 16px;
+      border-radius: 999px;
+      border: 2px solid #CBD5E1;
+      background: #fff;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.15s;
+    }
+    .test-probe-btn:hover {
+      transform: scale(1.04);
+    }
+    .probe-red { color: #E11D48; border-color: #E11D48; }
+    .probe-black { color: #1E293B; border-color: #1E293B; }
+
+    /* Switch Interativo */
+    .toggle-switch-ui {
+      width: 64px;
+      height: 34px;
+      background: #CBD5E1;
+      border-radius: 999px;
+      padding: 3px;
+      cursor: pointer;
+      transition: background 0.25s ease;
+      position: relative;
+    }
+    .toggle-switch-ui.on {
+      background: #10B981;
+    }
+    .toggle-knob {
+      width: 28px;
+      height: 28px;
+      background: #fff;
+      border-radius: 50%;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .toggle-switch-ui.on .toggle-knob {
+      transform: translateX(30px);
+    }
+
+    /* Confetti Canvas */
+    #confettiCanvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 999;
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="confettiCanvas"></canvas>
+
+<div class="deck-container">
+  <!-- Barra de Progresso no Topo -->
+  <div class="top-progress">
+    <div class="top-progress-fill" id="progressFill"></div>
+  </div>
+
+  <!-- Topbar com Identidade Institucional -->
+  <header class="topbar">
+    <div class="topbar-brand">
+      <img src="../../midia/logo-ifsc-florianopolis.png" alt="IFSC" class="topbar-logo" onerror="this.style.display='none'">
+      <div class="topbar-title">
+        <span>Entre Fios e Fritas</span>
+        <span style="color:var(--ink-muted)">•</span>
+        <span style="color:var(--ink-soft); font-weight:500;">Engenharia Mecatrônica IFSC</span>
+      </div>
+    </div>
+    <div>
+      <span class="badge-tag">Engenharia, Sociedade e Cidadania</span>
+    </div>
+  </header>
+
+  <!-- Palco dos Slides -->
+  <main class="stage">
+
+    <!-- ================= SLIDE 01: CAPA ================= -->
+    <section class="slide active" id="slide-1">
+      <div class="grid-2" style="align-items:center;">
+        <div>
+          <div class="kicker">
+            <span>🍟 Ação de Extensão Curricularizada</span>
+          </div>
+          <h1 class="title-hero">
+            Entre Fios &amp; Fritas: <br>
+            <span style="color:var(--accent-orange);">Desvendando a Eletrônica</span>
+          </h1>
+          <p class="lead-text">
+            Uma oficina investigativa de manutenção simulada de Air Fryer para despertar vocações tecnológicas em estudantes do ensino médio público.
+          </p>
+          <div style="display:flex; gap:12px; margin-bottom:30px;">
+            <div style="background:var(--bg-card); border:1px solid var(--line); padding:10px 16px; border-radius:12px;">
+              <div style="font-size:12px; color:var(--ink-muted); font-weight:700;">INSTITUIÇÃO</div>
+              <div style="font-size:14px; font-weight:700; color:var(--ink);">IFSC Florianópolis</div>
+            </div>
+            <div style="background:var(--bg-card); border:1px solid var(--line); padding:10px 16px; border-radius:12px;">
+              <div style="font-size:12px; color:var(--ink-muted); font-weight:700;">FASE</div>
+              <div style="font-size:14px; font-weight:700; color:var(--ink);">7ª Fase Mecatrônica</div>
+            </div>
+            <div style="background:var(--bg-card); border:1px solid var(--line); padding:10px 16px; border-radius:12px;">
+              <div style="font-size:12px; color:var(--ink-muted); font-weight:700;">METODOLOGIA</div>
+              <div style="font-size:14px; font-weight:700; color:var(--ifsc-green);">Aprender Fazendo (Hands-On)</div>
+            </div>
+          </div>
+          <button class="btn primary" onclick="nextSlide()" style="font-size:16px; padding:12px 28px;">
+            Iniciar Apresentação →
+          </button>
+        </div>
+
+        <div style="display:flex; justify-content:center; align-items:center;">
+          <div class="polaroid" style="max-width:440px;">
+            <div class="tape"></div>
+            <img src="../../midia/tinkercad-circuit.png" alt="Circuito Didático da Oficina" onerror="this.src='https://placehold.co/600x400/FFF3E5/EB6A20?text=Circuito+Air+Fryer'">
+            <div class="polaroid-caption">Circuito Didático em Baixa Tensão (12V)</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 02: O PROBLEMA & TERRITÓRIO ================= -->
+    <section class="slide" id="slide-2">
+      <div class="kicker">02 • Justificativa Social &amp; Território</div>
+      <h2 class="title-slide">O Abismo Teórico e o Eletrodoméstico como Ponte</h2>
+      <p class="lead-text">Florianópolis é referência nacional em tecnologia, mas o acesso à formação em engenharia ainda é distante para jovens da rede pública.</p>
+
+      <div class="grid-3">
+        <div class="card">
+          <div class="card-icon" style="background:#FEE2E2; color:var(--ifsc-red);">⚡</div>
+          <h3>Eletrônica Abstrata</h3>
+          <p>Nas escolas, física e circuitos elétricos restringem-se a fórmulas no quadro negro e cálculos de resistores equivalentes, sem que os alunos cheguem a tocar em componentes reais ou ferramentas.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon" style="background:var(--accent-warm); color:var(--accent-orange);">🍟</div>
+          <h3>A Air Fryer Popular</h3>
+          <p>Presente nos lares das famílias, a Air Fryer é o elemento disparador de curiosidade perfeito: transformar o "aparelho que faz batata frita" em um laboratório aberto de engenharia e ciência.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon" style="background:#E0F2FE; color:#0284C7;">🛡️</div>
+          <h3>Cidadania &amp; Segurança</h3>
+          <p>Capacitar o jovem a entender riscos elétricos, evitar gambiarras perigosas em casa e valorizar o trabalho técnico de manutenção e as carreiras públicas gratuitas do IFSC.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 03: ARTICULAÇÃO CURRICULAR ================= -->
+    <section class="slide" id="slide-3">
+      <div class="kicker">03 • Curricularização da Extensão</div>
+      <h2 class="title-slide">Interdisciplinaridade &amp; Fundamentação Pedagógica</h2>
+      <p class="lead-text">O projeto atende à Resolução CNE/CES nº 7/2018 integrando 5 unidades curriculares de Engenharia Mecatrônica em uma prática social dialógica.</p>
+
+      <div class="grid-2-1">
+        <div class="card">
+          <h3 style="margin-bottom:16px;">Integração Interdisciplinar (Mecatrônica 7ª Fase)</h3>
+          <div style="display:flex; flex-direction:column; gap:12px;">
+            <div style="display:flex; align-items:center; gap:12px; padding:10px 14px; background:var(--bg-panel); border-radius:10px;">
+              <span style="font-weight:700; color:var(--ifsc-green);">Acionamentos Eletromecânicos</span>
+              <span style="font-size:13px; color:var(--ink-soft); margin-left:auto;">Relés de Estado Sólido &amp; Cargas Térmicas</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:12px; padding:10px 14px; background:var(--bg-panel); border-radius:10px;">
+              <span style="font-weight:700; color:var(--accent-orange);">Análise de Circuitos &amp; Eletricidade</span>
+              <span style="font-size:13px; color:var(--ink-soft); margin-left:auto;">Leis de Kirchhoff, Malhas e Continuidade</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:12px; padding:10px 14px; background:var(--bg-panel); border-radius:10px;">
+              <span style="font-weight:700; color:var(--accent-teal);">Eletrônica Analógica</span>
+              <span style="font-size:13px; color:var(--ink-soft); margin-left:auto;">Semicondutores, Polaridade de LEDs e Chaves</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:12px; padding:10px 14px; background:var(--bg-panel); border-radius:10px;">
+              <span style="font-weight:700; color:var(--ifsc-red);">Engenharia, Sociedade e Cidadania</span>
+              <span style="font-size:13px; color:var(--ink-soft); margin-left:auto;">Comunicação Social e Democratização do Saber</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="background:var(--accent-warm); border-color:rgba(235,106,32,0.25);">
+          <h3 style="color:var(--accent-orange);">Referencial Teórico</h3>
+          <div style="margin-top:14px; font-size:14.5px; line-height:1.6; color:var(--ink);">
+            <p style="margin-bottom:12px;">
+              <strong>• Aprendizagem Significativa (David Ausubel):</strong> O conhecimento novo conecta-se a "subsunçores" pré-existentes no cotidiano do aluno (o funcionamento de um forno em casa).
+            </p>
+            <p>
+              <strong>• Pedagogia do Aprender Fazendo (John Dewey):</strong> A retenção e o entusiasmo ocorrem através da experimentação real e investigação ativa com multímetro e protoboard.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 04: A METODOLOGIA ================= -->
+    <section class="slide" id="slide-4">
+      <div class="kicker">04 • Dinâmica da Oficina</div>
+      <h2 class="title-slide">Roteiro da Ação: 5 Momentos de Aprendizagem</h2>
+      <p class="lead-text">Oficina gamificada de 1h30 a 2h, atendendo 16 alunos distribuídos em 4 bancadas investigativas.</p>
+
+      <!-- Stepper Nav -->
+      <div class="stepper-nav">
+        <div class="step-tab active" onclick="setStep(0)">
+          <div class="step-tab-num">ETAPA 01 • 15 MIN</div>
+          <div class="step-tab-title">O Desafio Inicial</div>
+        </div>
+        <div class="step-tab" onclick="setStep(1)">
+          <div class="step-tab-num">ETAPA 02 • 20 MIN</div>
+          <div class="step-tab-title">Conceitos &amp; Caixa</div>
+        </div>
+        <div class="step-tab" onclick="setStep(2)">
+          <div class="step-tab-num">ETAPA 03 • 35 MIN</div>
+          <div class="step-tab-title">Diagnóstico das Falhas</div>
+        </div>
+        <div class="step-tab" onclick="setStep(3)">
+          <div class="step-tab-num">ETAPA 04 • 15 MIN</div>
+          <div class="step-tab-title">O Conserto &amp; Relé</div>
+        </div>
+        <div class="step-tab" onclick="setStep(4)">
+          <div class="step-tab-num">ETAPA 05 • 15 MIN</div>
+          <div class="step-tab-title">Batatas &amp; Futuro</div>
+        </div>
+      </div>
+
+      <!-- Detalhes do Passo Ativo -->
+      <div class="card" id="stepDetailCard" style="min-height:180px; display:flex; align-items:center;">
+        <div style="flex:1;">
+          <h3 id="stepDetailTitle" style="color:var(--accent-orange); font-size:22px; margin-bottom:8px;">1. O Desafio: A Air Fryer Não Liga</h3>
+          <p id="stepDetailDesc" style="font-size:16px; line-height:1.6; color:var(--ink-soft);">
+            A equipe liga a Air Fryer na tomada diante da turma: ela permanece totalmente inerte. Lança-se o gancho: <em>"Quem topa o desafio de descobrir o problema e consertar isso aqui de verdade, hoje?"</em>. Divisão da turma em 4 equipes de 4 participantes.
+          </p>
+        </div>
+        <div id="stepDetailTag" style="padding:16px 24px; background:var(--bg-panel); border-radius:14px; text-align:center; min-width:180px;">
+          <div style="font-size:12px; font-weight:700; color:var(--ink-muted);">FOCO PEDAGÓGICO</div>
+          <div style="font-size:16px; font-weight:800; color:var(--ink);" id="stepDetailFoco">Gatilho de Curiosidade</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 05: SEGURANÇA ELÉTRICA ================= -->
+    <section class="slide" id="slide-5">
+      <div class="kicker">05 • Arquitetura do Protótipo Didático</div>
+      <h2 class="title-slide">Segurança por Isolamento: A Regra de Ouro</h2>
+      <p class="lead-text">Zero risco de choque elétrico: a protoboard dos alunos opera exclusivamente em 12V DC, totalmente isolada da rede elétrica.</p>
+
+      <div class="grid-2">
+        <div class="card" style="border-left:5px solid var(--ifsc-green);">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <h3 style="color:var(--ifsc-green);">Lado A: Circuito de Comando (12V DC)</h3>
+            <span class="badge-tag" style="background:#DCFCE7; color:var(--ifsc-green); border:none;">MANUSEIO DOS ALUNOS</span>
+          </div>
+          <p style="margin-bottom:14px;">Tudo o que os alunos tocam, medem e modificam na protoboard:</p>
+          <ul style="list-style:none; display:flex; flex-direction:column; gap:8px; font-size:15px; color:var(--ink-soft);">
+            <li>✓ Alimentado por fonte externa segura de 12V DC contínua.</li>
+            <li>✓ Jumpers, LEDs indicadores, resistores e interruptores mecânicos.</li>
+            <li>✓ Tensão inofensiva ao toque humano (abaixo do limiar de perigo da NR-10).</li>
+          </ul>
+        </div>
+
+        <div class="card" style="border-left:5px solid var(--ifsc-red); background:#FFFDFD;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <h3 style="color:var(--ifsc-red);">Lado B: Circuito de Potência (220V AC)</h3>
+            <span class="badge-tag" style="background:#FEE2E2; color:var(--ifsc-red); border:none;">CAIXA LACRADA</span>
+          </div>
+          <p style="margin-bottom:14px;">Alimentação da resistência de aquecimento e motor da Air Fryer:</p>
+          <ul style="list-style:none; display:flex; flex-direction:column; gap:8px; font-size:15px; color:var(--ink-soft);">
+            <li>🔒 Confinada em caixa técnica de proteção fechada com parafusos.</li>
+            <li>🔒 Proteção com fusível ultra-rápido e prensa-cabos de isolação.</li>
+            <li>🔒 <strong>Chaveada por Relé de Estado Sólido (SSR)</strong> via isolamento óptico (sem contato elétrico com os 12V).</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 06: [INTERATIVO] CIRCUITO E FLUXO ================= -->
+    <section class="slide" id="slide-6">
+      <div class="kicker">06 • Interatividade Técnica</div>
+      <h2 class="title-slide">Simulador do Circuito de Comando</h2>
+      <p class="lead-text">Clique no interruptor para fechar a malha, observar o fluxo de corrente e verificar o acionamento do relé.</p>
+
+      <div class="grid-2-1" style="align-items:center;">
+        <!-- Circuito SVG -->
+        <div class="card" style="padding:20px; background:#1E293B; border-color:#334155; position:relative; overflow:hidden;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+            <span style="font-family:var(--font-mono); font-size:13px; color:#94A3B8;">ESQUEMÁTICO DIDÁTICO INTERATIVO</span>
+            <span id="circuitStatusBadge" style="font-family:var(--font-mono); font-size:12px; font-weight:700; padding:4px 10px; border-radius:999px; background:#475569; color:#E2E8F0;">CIRCUITO ABERTO</span>
+          </div>
+
+          <svg viewBox="0 0 540 280" style="width:100%; height:auto; display:block;">
+            <!-- Fios Base (Cinza Escuro) -->
+            <path d="M 60 70 L 160 70 M 230 70 L 330 70 M 390 70 L 460 70 L 460 210 L 60 210 L 60 70" fill="none" stroke="#334155" stroke-width="4" stroke-linecap="round"/>
+
+            <!-- Fios com Fluxo de Corrente Animado (Verde) -->
+            <path id="currentPath" d="M 60 70 L 160 70 M 230 70 L 330 70 M 390 70 L 460 70 L 460 210 L 60 210 L 60 70" fill="none" stroke="#10B981" stroke-width="4" stroke-linecap="round" class="current-flow" style="display:none;"/>
+
+            <!-- Fonte 12V -->
+            <rect x="35" y="110" width="50" height="60" rx="8" fill="#0F172A" stroke="#475569" stroke-width="2"/>
+            <text x="60" y="136" fill="#F8FAFC" font-size="12" font-weight="bold" font-family="sans-serif" text-anchor="middle">+12V</text>
+            <text x="60" y="156" fill="#94A3B8" font-size="10" font-family="sans-serif" text-anchor="middle">FONTE</text>
+
+            <!-- Chave / Interruptor (Interativo) -->
+            <g id="switchSvg" style="cursor:pointer;" onclick="toggleCircuitSwitch()">
+              <circle cx="160" cy="70" r="5" fill="#F8FAFC"/>
+              <circle cx="230" cy="70" r="5" fill="#F8FAFC"/>
+              <line id="switchArm" x1="160" y1="70" x2="215" y2="40" stroke="#F6A709" stroke-width="5" stroke-linecap="round" style="transition:all 0.25s ease;"/>
+              <text x="195" y="32" fill="#F6A709" font-size="11" font-weight="bold" font-family="sans-serif" text-anchor="middle">CHAVE</text>
+            </g>
+
+            <!-- Resistor 1k -->
+            <g transform="translate(330, 56)">
+              <rect x="0" y="6" width="60" height="16" rx="4" fill="#E2E8F0" stroke="#64748B" stroke-width="2"/>
+              <line x1="12" y1="6" x2="12" y2="22" stroke="#92400E" stroke-width="3"/>
+              <line x1="24" y1="6" x2="24" y2="22" stroke="#000" stroke-width="3"/>
+              <line x1="36" y1="6" x2="36" y2="22" stroke="#DC2626" stroke-width="3"/>
+              <text x="30" y="-4" fill="#94A3B8" font-size="10" font-family="sans-serif" text-anchor="middle">R = 1 kΩ</text>
+            </g>
+
+            <!-- LED Indicador -->
+            <g transform="translate(460, 110)">
+              <circle id="ledBulb" cx="0" cy="20" r="18" fill="#334155" stroke="#64748B" stroke-width="2" class="led-off"/>
+              <polygon points="-8,14 8,14 0,28" fill="#F8FAFC" opacity="0.8"/>
+              <text x="35" y="24" fill="#94A3B8" font-size="11" font-weight="bold" font-family="sans-serif">LED</text>
+            </g>
+
+            <!-- Módulo SSR / Relé -->
+            <g transform="translate(230, 175)">
+              <rect id="ssrBox" x="0" y="0" width="130" height="60" rx="8" fill="#0F172A" stroke="#475569" stroke-width="2"/>
+              <text x="65" y="24" fill="#F8FAFC" font-size="12" font-weight="bold" font-family="sans-serif" text-anchor="middle">RELÉ SSR</text>
+              <text id="ssrStatusText" x="65" y="44" fill="#94A3B8" font-size="10" font-family="sans-serif" text-anchor="middle">STANDBY (220V OFF)</text>
+            </g>
+          </svg>
+        </div>
+
+        <!-- Painel de Controle -->
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px;">
+            <div>
+              <div style="font-size:12px; font-weight:700; color:var(--ink-muted);">INTERRUPTOR MANUAL</div>
+              <h3 style="font-size:18px;">Ligar / Desligar Circuito</h3>
+            </div>
+            <div id="switchToggleBtn" class="toggle-switch-ui" onclick="toggleCircuitSwitch()">
+              <div class="toggle-knob"></div>
+            </div>
+          </div>
+
+          <div style="background:var(--bg-panel); border-radius:12px; padding:14px; margin-bottom:16px;">
+            <div style="font-size:12px; font-weight:700; color:var(--ink-muted); margin-bottom:6px;">PARÂMETROS ELÉTRICOS EM TEMPO REAL</div>
+            <div style="display:flex; justify-content:space-between; font-family:var(--font-mono); font-size:14px;">
+              <span>Tensão de Malha:</span>
+              <strong id="liveVoltage" style="color:var(--ink);">0.0 V</strong>
+            </div>
+            <div style="display:flex; justify-content:space-between; font-family:var(--font-mono); font-size:14px; margin-top:4px;">
+              <span>Corrente Circulante:</span>
+              <strong id="liveCurrent" style="color:var(--ink);">0.0 mA</strong>
+            </div>
+          </div>
+
+          <p style="font-size:13.5px; color:var(--ink-soft); line-height:1.5;">
+            💡 <strong>Raciocínio Ensinado:</strong> Sem um caminho fechado contínuo, a corrente é zero. Ao ligar a chave, a corrente flui com segurança, o LED indica o status e o Relé SSR libera a potência da Air Fryer.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 07: [INTERATIVO] MULTÍMETRO & FALHAS ================= -->
+    <section class="slide" id="slide-7">
+      <div class="kicker">07 • Desafio das Bancadas</div>
+      <h2 class="title-slide">Diagnóstico de Falhas com Multímetro</h2>
+      <p class="lead-text">Selecione uma bancada, use o multímetro com som de BIP e descubra o defeito injetado no circuito.</p>
+
+      <div class="grid-2-1">
+        <!-- Multímetro Interativo -->
+        <div class="card" style="padding:20px;">
+          <div style="display:flex; gap:8px; margin-bottom:16px; overflow-x:auto;">
+            <button class="btn" id="faultBtn0" onclick="selectFault(0)" style="font-size:12px; padding:6px 12px;">Bancada 1: LED Invertido</button>
+            <button class="btn" id="faultBtn1" onclick="selectFault(1)" style="font-size:12px; padding:6px 12px;">Bancada 2: Jumper Deslocado</button>
+            <button class="btn" id="faultBtn2" onclick="selectFault(2)" style="font-size:12px; padding:6px 12px;">Bancada 3: Resistor Aberto</button>
+          </div>
+
+          <!-- Multímetro Virtual -->
+          <div class="multimeter-box">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-family:var(--font-mono); font-size:12px; letter-spacing:0.1em; opacity:0.9;">DIGITAL MULTIMETER • ESCALA CONTINUIDADE</span>
+              <span id="meterBuzzerIndicator" style="font-size:18px; opacity:0.3;">🔊</span>
+            </div>
+            <div class="multimeter-lcd">
+              <span id="meterDisplay">O.L</span>
+              <span class="lcd-unit" id="meterUnit">Ω</span>
+            </div>
+            <div style="font-size:12px; opacity:0.85; text-align:center;">
+              Toque nas pontas de prova abaixo para testar diferentes trechos do circuito:
+            </div>
+          </div>
+
+          <!-- Pontos de Teste -->
+          <div style="display:flex; gap:10px; margin-top:16px; justify-content:center;">
+            <button class="test-probe-btn probe-red" onclick="testNode('alimentacao')">
+              📍 Testar Nó de Alimentação
+            </button>
+            <button class="test-probe-btn probe-black" onclick="testNode('componente')">
+              📍 Testar Componente Suspeito
+            </button>
+          </div>
+        </div>
+
+        <!-- Explicação do Diagnóstico -->
+        <div class="card">
+          <div style="font-size:12px; font-weight:700; color:var(--accent-orange); margin-bottom:4px;">CASO DA BANCADA SELECIONADA</div>
+          <h3 id="faultTitle" style="font-size:19px; margin-bottom:8px;">Bancada 1: LED Invertido</h3>
+          <p id="faultDesc" style="font-size:14.5px; line-height:1.55; color:var(--ink-soft); margin-bottom:14px;">
+            O circuito parece idêntico ao esquemático, mas o LED foi colocado com anodo e catodo trocados. O diodo bloqueia a passagem da corrente.
+          </p>
+
+          <div style="background:var(--bg-panel); border-radius:12px; padding:12px; margin-bottom:12px;">
+            <div style="font-size:12px; font-weight:700; color:var(--ink-muted);">COMO O ALUNO DESCOBRE:</div>
+            <div id="faultSolucao" style="font-size:13.5px; color:var(--ink); margin-top:4px;">
+              Ao medir continuidade ou condução do diodo, o multímetro aponta circuito aberto. Ao inverter as perninhas na protoboard, o LED acende e a Air Fryer liga!
+            </div>
+          </div>
+
+          <div style="font-size:12.5px; color:var(--ink-muted);">
+            🔔 <em>O multímetro digital emite som sonoro real quando detecta continuidade fechada.</em>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 08: PROTÓTIPO FÍSICO ================= -->
+    <section class="slide" id="slide-8">
+      <div class="kicker">08 • Materialização Física</div>
+      <h2 class="title-slide">Caixa Didática &amp; Protoboard no Tinkercad</h2>
+      <p class="lead-text">O circuito completo foi prototipado e validado em ambiente virtual antes da manufatura dos kits físicos com parafusos externos.</p>
+
+      <div class="grid-2" style="align-items:center;">
+        <div class="polaroid">
+          <div class="tape"></div>
+          <img src="../../midia/tinkercad-circuit.png" alt="Circuito Tinkercad Oficial" style="max-height:320px; object-fit:contain; background:#FFFFFF;">
+          <div class="polaroid-caption">Layout das Trilhas e Componentes na Protoboard</div>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:16px;">
+          <div class="card">
+            <div class="card-icon" style="background:#FEF3C7; color:#D97706;">🪛</div>
+            <h3>O Ritual de Desparafusar a Caixa</h3>
+            <p>Cada equipe recebe a "Air Fryer" dentro de um gabinete didático. O ato de usar chaves de fenda para abrir o aparelho gera engajamento imediato e quebra o receio da ferramenta.</p>
+          </div>
+          <div class="card">
+            <div class="card-icon" style="background:#E0E7FF; color:#4338CA;">📋</div>
+            <h3>Manual da Equipe de Manutenção</h3>
+            <p>Um livreto ilustrado e simplificado orienta os estudantes com esquemáticos pictóricos coloridos, guia rápido do multímetro e mapa das trilhas da matriz de contatos.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 09: ORÇAMENTO & VIABILIDADE ================= -->
+    <section class="slide" id="slide-9">
+      <div class="kicker">09 • Gestão &amp; Recursos</div>
+      <h2 class="title-slide">Orçamento e Replicabilidade do Projeto</h2>
+      <p class="lead-text">Investimento de baixo custo com kits permanentes, duráveis e 100% reaproveitáveis em futuras edições extensionistas.</p>
+
+      <div class="grid-2-1">
+        <div class="card" style="padding:0; overflow:hidden;">
+          <table style="width:100%; border-collapse:collapse; font-size:14px; text-align:left;">
+            <thead>
+              <tr style="background:var(--bg-panel); border-bottom:1px solid var(--line);">
+                <th style="padding:12px 18px; color:var(--ink-soft);">Item Orçado</th>
+                <th style="padding:12px 18px; color:var(--ink-soft);">Qtd.</th>
+                <th style="padding:12px 18px; color:var(--ink-soft); text-align:right;">Estimativa</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-bottom:1px solid var(--line);">
+                <td style="padding:10px 18px; font-weight:600;">Air Fryer Usada (Doação/Sucata)</td>
+                <td style="padding:10px 18px;">1 un</td>
+                <td style="padding:10px 18px; text-align:right; color:var(--ifsc-green);">R$ 0 a 100</td>
+              </tr>
+              <tr style="border-bottom:1px solid var(--line);">
+                <td style="padding:10px 18px; font-weight:600;">Relé de Estado Sólido 25A + Dissipador</td>
+                <td style="padding:10px 18px;">1 un</td>
+                <td style="padding:10px 18px; text-align:right;">R$ 55</td>
+              </tr>
+              <tr style="border-bottom:1px solid var(--line);">
+                <td style="padding:10px 18px; font-weight:600;">Caixa Técnica, Fusível e Prensa-cabos</td>
+                <td style="padding:10px 18px;">1 kit</td>
+                <td style="padding:10px 18px; text-align:right;">R$ 70</td>
+              </tr>
+              <tr style="border-bottom:1px solid var(--line);">
+                <td style="padding:10px 18px; font-weight:600;">Kits de Protoboard + Componentes</td>
+                <td style="padding:10px 18px;">6 kits</td>
+                <td style="padding:10px 18px; text-align:right;">R$ 250</td>
+              </tr>
+              <tr style="border-bottom:1px solid var(--line);">
+                <td style="padding:10px 18px; font-weight:600;">Multímetros Didáticos Digitais</td>
+                <td style="padding:10px 18px;">4 un</td>
+                <td style="padding:10px 18px; text-align:right;">R$ 160</td>
+              </tr>
+              <tr>
+                <td style="padding:10px 18px; font-weight:600;">Fonte DC 12V e Consumíveis</td>
+                <td style="padding:10px 18px;">1 kit</td>
+                <td style="padding:10px 18px; text-align:right;">R$ 68</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card" style="background:var(--accent-warm); border-color:rgba(235,106,32,0.3); display:flex; flex-direction:column; justify-content:center;">
+          <div style="font-size:12px; font-weight:700; color:var(--accent-orange);">TOTAL ESTIMADO DO PROJETO</div>
+          <div style="font-family:var(--font-head); font-size:42px; font-weight:900; color:var(--ink); margin:6px 0;">
+            ~ R$ 650
+          </div>
+          <p style="font-size:14px; color:var(--ink-soft); line-height:1.5;">
+            Os componentes adquiridos não se perdem: tornam-se <strong>patrimônio didático permanente</strong> para novas oficinas em outras escolas públicas da Grande Florianópolis.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 10: RESULTADOS & IMPACTO ================= -->
+    <section class="slide" id="slide-10">
+      <div class="kicker">10 • Avaliação &amp; Legado</div>
+      <h2 class="title-slide">Impacto Formativo e Social Esperado</h2>
+      <p class="lead-text">Métricas tangíveis para validar a aprendizagem dos estudantes e a consolidação do IFSC na comunidade escolar.</p>
+
+      <div class="grid-3">
+        <div class="card">
+          <div class="card-icon">🎓</div>
+          <h3>Vocação Tecnológica</h3>
+          <p>Medição por formulário rápido de saída: aferir o aumento de interesse dos estudantes por cursos técnicos e engenharias públicas do IFSC.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">📖</div>
+          <h3>Recurso Aberto (REA)</h3>
+          <p>Repositório público com código aberto, manuais em Markdown e esquemáticos disponíveis para que qualquer docente possa replicar a oficina.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">👥</div>
+          <h3>Protagonismo Discente</h3>
+          <p>Desenvolvimento de habilidades humanas e comunicativas essenciais para os formandos em Mecatrônica: liderança, empatia e didática.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 11: CONCLUSÃO ================= -->
+    <section class="slide" id="slide-11">
+      <div style="text-align:center; max-width:860px; margin:0 auto;">
+        <div class="kicker" style="justify-content:center;">
+          <span>🍟 Missão Cumprida • Oficina Replicável</span>
+        </div>
+        <h2 class="title-hero" style="font-size:48px; margin-bottom:16px;">
+          "Ensinar eletrônica é acender a curiosidade para transformar o futuro."
+        </h2>
+        <p class="lead-text" style="margin:0 auto 28px; font-size:18px;">
+          Obrigado! Convidamos a turma para validar o conserto do circuito e comemorar com batata frita quente!
+        </p>
+
+        <div style="display:flex; justify-content:center; gap:16px; margin-bottom:32px;">
+          <button class="btn primary" onclick="triggerConfetti()" style="font-size:16px; padding:12px 28px;">
+            🎉 Celebrar Conserto com Batata Frita!
+          </button>
+          <button class="btn" onclick="goToSlide(0)" style="font-size:15px;">
+            ↺ Voltar ao Início
+          </button>
+        </div>
+
+        <div style="font-size:13px; color:var(--ink-muted); line-height:1.6;">
+          Engenharia Mecatrônica • Unidade Curricular de Engenharia, Sociedade e Cidadania<br>
+          <strong>IFSC — Instituto Federal de Santa Catarina (Campus Florianópolis)</strong>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Rodapé com Navegação -->
+  <footer class="nav-bar">
+    <div class="nav-counter" id="slideCounter">01 / 11</div>
+    <div class="nav-hint">
+      Navegue usando as setas <span class="key-cap">←</span> <span class="key-cap">→</span> ou <span class="key-cap">Espaço</span> • <span class="key-cap">F</span> Tela Cheia
+    </div>
+    <div class="nav-controls">
+      <button class="btn" id="prevBtn" onclick="prevSlide()" disabled>← Anterior</button>
+      <button class="btn primary" id="nextBtn" onclick="nextSlide()">Próximo →</button>
+      <button class="btn" onclick="toggleFullscreen()" title="Alternar Tela Cheia">⛶</button>
+    </div>
+  </footer>
+</div>
+
+<script>
+  /* ================= ESTADO DA APRESENTAÇÃO ================= */
+  const totalSlides = 11;
+  let currentSlide = 0;
+
+  function updateDeck() {
+    // Alterna slides visíveis
+    document.querySelectorAll('.slide').forEach((s, idx) => {
+      s.classList.toggle('active', idx === currentSlide);
+    });
+
+    // Atualiza barra de progresso
+    const pct = ((currentSlide + 1) / totalSlides) * 100;
+    document.getElementById('progressFill').style.width = pct + '%';
+
+    // Atualiza contador
+    const currentStr = String(currentSlide + 1).padStart(2, '0');
+    const totalStr = String(totalSlides).padStart(2, '0');
+    document.getElementById('slideCounter').textContent = `${currentStr} / ${totalStr}`;
+
+    // Atualiza botões
+    document.getElementById('prevBtn').disabled = currentSlide === 0;
+    const nextBtn = document.getElementById('nextBtn');
+    if (currentSlide === totalSlides - 1) {
+      nextBtn.textContent = 'Concluir 🍟';
+    } else {
+      nextBtn.textContent = 'Próximo →';
+    }
+  }
+
+  function nextSlide() {
+    if (currentSlide < totalSlides - 1) {
+      currentSlide++;
+      updateDeck();
+    }
+  }
+
+  function prevSlide() {
+    if (currentSlide > 0) {
+      currentSlide--;
+      updateDeck();
+    }
+  }
+
+  function goToSlide(idx) {
+    if (idx >= 0 && idx < totalSlides) {
+      currentSlide = idx;
+      updateDeck();
+    }
+  }
+
+  /* Teclado */
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+      e.preventDefault();
+      nextSlide();
+    } else if (e.key === 'ArrowLeft' || e.key === 'PageUp' || e.key === 'Backspace') {
+      e.preventDefault();
+      prevSlide();
+    } else if (e.key === 'Home') {
+      e.preventDefault();
+      goToSlide(0);
+    } else if (e.key === 'End') {
+      e.preventDefault();
+      goToSlide(totalSlides - 1);
+    } else if (e.key.toLowerCase() === 'f') {
+      toggleFullscreen();
+    }
+  });
+
+  function toggleFullscreen() {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(() => {});
+    } else {
+      document.exitFullscreen().catch(() => {});
+    }
+  }
+
+  /* ================= SLIDE 4: STEPPER INTERATIVO ================= */
+  const stepsData = [
+    {
+      title: "1. O Desafio: A Air Fryer Não Liga",
+      desc: "A equipe liga a Air Fryer na tomada diante da turma: ela permanece totalmente inerte. Lança-se o gancho: 'Quem topa o desafio de descobrir o problema e consertar isso aqui de verdade, hoje?'. Divisão da turma em 4 equipes de 4 participantes.",
+      foco: "Gatilho de Curiosidade"
+    },
+    {
+      title: "2. Conceitos Elétricos & Abertura da Caixa",
+      desc: "Apresentação rápida de tensão, corrente e resistência com a analogia hidráulica. Os alunos recebem as ferramentas manuais para desparafusar a caixa didática e revelar a matriz de contatos interna.",
+      foco: "Imersão Tátil"
+    },
+    {
+      title: "3. Diagnóstico Investigativo com Multímetro",
+      desc: "Cada grupo recebe o mesmo esquemático de referência, mas com um defeito injetado diferente. Munidos do multímetro, os alunos testam continuidade nó a nó para descobrir a falha oculta.",
+      foco: "Resolução de Problemas"
+    },
+    {
+      title: "4. O Conserto Correto & Revelação do Relé",
+      desc: "Os grupos corrigem o posicionamento dos componentes na protoboard. Explica-se o funcionamento do Relé SSR: como um pequeno sinal de 12V aciona com segurança uma carga de 220V sem contato físico.",
+      foco: "Conexão com a Engenharia"
+    },
+    {
+      title: "5. Acionamento, Batata Frita & Conexão com o IFSC",
+      desc: "O acionamento conjunto valida o sucesso dos 4 grupos, ligando o aquecimento da Air Fryer. A oficina encerra com uma roda de conversa sobre Engenharia Mecatrônica enquanto saboreiam as batatas fritas.",
+      foco: "Celebração & Vocação"
+    }
+  ];
+
+  function setStep(index) {
+    document.querySelectorAll('.step-tab').forEach((tab, i) => {
+      tab.classList.toggle('active', i === index);
+    });
+    const data = stepsData[index];
+    document.getElementById('stepDetailTitle').textContent = data.title;
+    document.getElementById('stepDetailDesc').textContent = data.desc;
+    document.getElementById('stepDetailFoco').textContent = data.foco;
+  }
+
+  /* ================= SLIDE 6: CIRCUITO INTERATIVO ================= */
+  let isCircuitClosed = false;
+
+  function toggleCircuitSwitch() {
+    isCircuitClosed = !isCircuitClosed;
+    const switchArm = document.getElementById('switchArm');
+    const currentPath = document.getElementById('currentPath');
+    const ledBulb = document.getElementById('ledBulb');
+    const ssrStatusText = document.getElementById('ssrStatusText');
+    const circuitBadge = document.getElementById('circuitStatusBadge');
+    const toggleBtn = document.getElementById('switchToggleBtn');
+    const liveVolt = document.getElementById('liveVoltage');
+    const liveCurr = document.getElementById('liveCurrent');
+
+    if (isCircuitClosed) {
+      // Chave fecha em SVG (alinhada em y=70)
+      switchArm.setAttribute('x2', '230');
+      switchArm.setAttribute('y2', '70');
+      switchArm.setAttribute('stroke', '#10B981');
+      
+      currentPath.style.display = 'block';
+      ledBulb.setAttribute('fill', '#10B981');
+      ledBulb.classList.remove('led-off');
+      ledBulb.classList.add('led-glow');
+
+      ssrStatusText.textContent = 'ATIVO (220V LIGADO)';
+      ssrStatusText.setAttribute('fill', '#10B981');
+
+      circuitBadge.textContent = 'CIRCUITO FECHADO (12V)';
+      circuitBadge.style.background = '#10B981';
+      circuitBadge.style.color = '#FFFFFF';
+
+      toggleBtn.classList.add('on');
+      liveVolt.textContent = '12.0 V';
+      liveCurr.textContent = '10.5 mA';
+    } else {
+      // Chave abre
+      switchArm.setAttribute('x2', '215');
+      switchArm.setAttribute('y2', '40');
+      switchArm.setAttribute('stroke', '#F6A709');
+
+      currentPath.style.display = 'none';
+      ledBulb.setAttribute('fill', '#334155');
+      ledBulb.classList.add('led-off');
+      ledBulb.classList.remove('led-glow');
+
+      ssrStatusText.textContent = 'STANDBY (220V OFF)';
+      ssrStatusText.setAttribute('fill', '#94A3B8');
+
+      circuitBadge.textContent = 'CIRCUITO ABERTO';
+      circuitBadge.style.background = '#475569';
+      circuitBadge.style.color = '#E2E8F0';
+
+      toggleBtn.classList.remove('on');
+      liveVolt.textContent = '0.0 V';
+      liveCurr.textContent = '0.0 mA';
+    }
+  }
+
+  /* ================= SLIDE 7: SIMULADOR DE MULTÍMETRO ================= */
+  const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  function playBeep() {
+    try {
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(2200, audioCtx.currentTime); // Tom agudo clássico de multímetro
+      gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.28);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.28);
+    } catch(e) {}
+  }
+
+  const faults = [
+    {
+      name: "Bancada 1: LED Invertido",
+      desc: "O LED indicador está fisicamente encaixado na matriz, porém com a polaridade invertida (catodo no polo positivo). Sendo um diodo, ele impede totalmente o fluxo da corrente.",
+      solucao: "O multímetro acusa circuito aberto no teste direto de continuidade. Ao identificar o chanfro/perninha maior e invertê-lo, a malha fecha perfeitamente."
+    },
+    {
+      name: "Bancada 2: Jumper Deslocado",
+      desc: "Um dos cabos jumpers de alimentação foi inserido na coluna imediatamente ao lado da linha do resistor na protoboard, deixando a conexão interrompida no ar.",
+      solucao: "Ao rastrear a continuidade coluna a coluna com as pontas de prova, o multímetro aponta O.L exatamente na junção do jumper. O ajuste é imediato."
+    },
+    {
+      name: "Bancada 3: Resistor Aberto (Simulado)",
+      desc: "O resistor limitador está com o terminal quebrado ou valor incorreto (interrupção ôhmica), simulando a falha de um fusível térmico rompido na Air Fryer real.",
+      solucao: "O teste de continuidade do resistor revela resistência infinita (O.L.). A substituição pelo resistor novo de 1kΩ restabelece o circuito."
+    }
+  ];
+
+  let currentFaultIdx = 0;
+
+  function selectFault(idx) {
+    currentFaultIdx = idx;
+    document.querySelectorAll('[id^="faultBtn"]').forEach((b, i) => {
+      b.classList.toggle('primary', i === idx);
+    });
+    document.getElementById('faultTitle').textContent = faults[idx].name;
+    document.getElementById('faultDesc').textContent = faults[idx].desc;
+    document.getElementById('faultSolucao').textContent = faults[idx].solucao;
+
+    // Reseta LCD
+    document.getElementById('meterDisplay').textContent = "O.L";
+    document.getElementById('meterBuzzerIndicator').style.opacity = '0.3';
+  }
+  selectFault(0);
+
+  function testNode(tipo) {
+    const display = document.getElementById('meterDisplay');
+    const buzzer = document.getElementById('meterBuzzerIndicator');
+
+    if (tipo === 'alimentacao') {
+      // Linha de alimentação tem continuidade OK
+      display.textContent = "0.02";
+      buzzer.style.opacity = '1';
+      playBeep();
+    } else {
+      // Componente defeituoso da bancada
+      display.textContent = "O.L";
+      buzzer.style.opacity = '0.3';
+    }
+  }
+
+  /* ================= CONFETTI COMEMORATIVO ================= */
+  function triggerConfetti() {
+    playBeep();
+    const canvas = document.getElementById('confettiCanvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const pieces = [];
+    const colors = ['#EB6A20', '#F6A709', '#009639', '#C8102E', '#FBBF24', '#3B82F6'];
+
+    for (let i = 0; i < 90; i++) {
+      pieces.push({
+        x: canvas.width / 2,
+        y: canvas.height / 2,
+        w: Math.random() * 10 + 6,
+        h: Math.random() * 8 + 4,
+        vx: (Math.random() - 0.5) * 18,
+        vy: (Math.random() - 0.7) * 22,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        rotation: Math.random() * 360,
+        vr: (Math.random() - 0.5) * 12
+      });
+    }
+
+    let frame = 0;
+    function anim() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      pieces.forEach(p => {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.45; // Gravidade
+        p.rotation += p.vr;
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate((p.rotation * Math.PI) / 180);
+        ctx.fillStyle = p.color;
+        ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+        ctx.restore();
+      });
+
+      frame++;
+      if (frame < 120) {
+        requestAnimationFrame(anim);
+      } else {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+    }
+    anim();
+  }
+
+  // Inicialização
+  updateDeck();
+</script>
+
+</body>
+</html>
