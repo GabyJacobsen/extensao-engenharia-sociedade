@@ -116,4 +116,4 @@ Para organizar a oficina em sua escola ou comunidade:
 
 ## 📜 Licença
 
-Os conteúdos didáticos deste repositório são distribuídos sob a licença [Creative Commons Atribuição-CompartilhaIgual 4.0 Internacional (CC BY-SA 4.0)](LICENSE) e os projetos técnicos sob a [Licença MIT](LICENSE). Sinta-se encorajado a utilizar, adaptar e expandir esta oficina!
+Os conteúdos didáticos deste repositório são distribuídos sob a licença [Creative Commons Atribuição-CompartilhaIgual 4.0 Internacional (CC BY-SA 4.0)](LICENSE) e os projetos técnicos sob a [Licença MIT](LICENSE). Sinta-se encorajado a utilizar, adaptar e expandir esta oficina
