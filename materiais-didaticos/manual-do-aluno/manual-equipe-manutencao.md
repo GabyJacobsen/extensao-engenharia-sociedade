@@ -1,6 +1,6 @@
 # Manual da Equipe de Manutenção — Operação Air Fryer
 
-## Página 1 — Missão e Regra de Ouro
+## Missão e Regra de Ouro
 
 **Sua missão:** a air fryer da bancada está com defeito. O circuito de controle dela foi montado numa protoboard e algo está errado ou faltando. Sua equipe precisa diagnosticar o problema, consertar a montagem e testar — se acertar, ela liga de verdade.
 
@@ -13,7 +13,7 @@
 - Resistência (Ω): o quanto um componente dificulta essa passagem.
 - Circuito fechado: caminho completo, sem interrupção, do positivo até o negativo. Se faltar um pedaço, nada funciona.
 
-## Página 2 — Ferramentas e Componentes do Kit
+## Ferramentas e Componentes do Kit
 
 **Protoboard:** por dentro, ela é dividida em fileiras curtas conectadas entre si. Encaixar dois componentes na mesma fileira é o mesmo que ligá-los com um fio. Encaixar na fileira errada = circuito não fecha (ou fecha errado).
 
@@ -21,14 +21,10 @@
 
 | **Componente** | **O que verificar**                                                                                                                                                                       |
 | -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Resistor       | Não tem polaridade (pode ir em qualquer direção), mas precisa estar na fileira certa                                                                                                      |
-| ---            | ---                                                                                                                                                                                       |
+| Resistor       | Não tem polaridade (pode ir em qualquer direção), mas precisa estar na fileira certa                                                                                                        |
 | LED            | Tem polaridade! Perna mais longa = positivo. Invertido, não acende (mas também não queima nada)                                                                                           |
-| ---            | ---                                                                                                                                                                                       |
 | Interruptor    | Ao contrário de um botão de campainha, ele fica ligado ou desligado até ser acionado de novo — não precisa ficar segurando. Confira se os dois terminais usados estão nas fileiras certas |
-| ---            | ---                                                                                                                                                                                       |
 | Jumper (fio)   | Só faz a ponte entre duas fileiras. Confira início e fim                                                                                                                                  |
-| ---            | ---                                                                                                                                                                                       |
 
 **Multímetro — uso rápido:**
 
@@ -37,7 +33,7 @@
 3. Para tensão: ponta vermelha no positivo, preta no negativo (ou referência), leia o valor no visor.
 4. Nunca meça continuidade num circuito energizado.
 
-## Página 3 — Diagnóstico
+## Diagnóstico
 
 **Método (siga nessa ordem):**
 
@@ -52,13 +48,9 @@
 | **Sintoma**                              | **Possível causa a investigar**                                    |
 | ---------------------------------------- | ------------------------------------------------------------------ |
 | Nada acontece, nenhum LED acende         | Circuito aberto — falta jumper ou componente fora da fileira       |
-| ---                                      | ---                                                                |
 | LED não acende, mas o resto parece certo | Confira a polaridade do LED                                        |
-| ---                                      | ---                                                                |
 | Interruptor não faz efeito nenhum        | Confira se os terminais do interruptor estão nas fileiras corretas |
-| ---                                      | ---                                                                |
 | Parece tudo certo mas não liga           | Peça ajuda de um monitor para medir tensão ponto a ponto           |
-| ---                                      | ---                                                                |
 
 **Registro do seu grupo:**
 
