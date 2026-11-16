@@ -70,24 +70,20 @@ extensao-engenharia-sociedade/
 │       ├── apresentacao-alunos-fios-e-fritas.html  # Versão lúdica para os estudantes (10 slides)
 │       └── roteiro-apresentacao-v2.md
 │
-├── hardware/                              # Projeto elétrico, esquemáticos e mecânica
-│   ├── esquematicos/                      # Diagramas oficiais e protótipos em PDF
-│   │   ├── esquematico-circuito-oficial.pdf
-│   │   └── prototipo-circuitos.pdf
-│   ├── explicacao-proposta-circuitos.md   # Justificativa técnica do funcionamento do circuito
-│   ├── defeitos-injetados/                # Fichas dos defeitos de cada bancada (guia do instrutor)
-│   └── caixa-didatica/                    # Projeto mecânico do gabinete didático
+├── hardware/                              # Projeto elétrico, esquemáticos e engenharia da bancada
+│   ├── esquematicos/                      # Diagramas elétricos oficiais em PDF
+│   │   └── esquematico-circuito-oficial.pdf
+│   └── explicacao-proposta-circuitos.md   # Guia de Engenharia da Bancada, dimensionamento e injeção de falhas
 │
 ├── materiais-didaticos/                   # Materiais impressos e entregues aos alunos
-│   ├── manual-do-aluno/                   # Manuais de manutenção e guias práticos
-│   │   ├── manual-equipe-manutencao.md
-│   │   ├── manual-conserto-air-fryer.html
-│   │   └── manual-conserto-versao-estilizada.html
-│   ├── guia-multimetro/                   # Guia rápido de uso do multímetro
-│   └── seguranca-eletrica/                # Dicas de segurança e conscientização doméstica
+│   └── manual-do-aluno/                   # Manuais de manutenção e guias práticos da equipe
+│       ├── manual-equipe-manutencao.md    # Versão em Markdown do manual dos alunos
+│       ├── manual-conserto-air-fryer.html # Manual didático estilizado para navegador/impressão
+│       └── manual-conserto-air-fryer.pdf  # Manual diagramado em PDF para impressão direta
 │
-├── midia/                                 # Registros visuais do projeto
-│   └── fotos-execucao/                    # Fotografias da oficina realizada
+├── midia/                                 # Identidade visual, diagramas e ícones
+│   ├── icons/                             # Ícones dos componentes e instrumentos
+│   └── images/                            # Diagramas do circuito e logos institucionais
 │
 ├── .gitignore
 ├── LICENSE                                # Termos de licença aberta (CC BY-SA 4.0 / MIT)
@@ -100,11 +96,11 @@ extensao-engenharia-sociedade/
 
 Para organizar a oficina em sua escola ou comunidade:
 
-1. **Consulte a Proposta Pedagógica:** Leia os documentos em [`docs/01-proposta/`](docs/01-proposta/) para entender os objetivos e o cronograma.
-2. **Monte os Circuitos:** Utilize os diagramas em [`hardware/esquematicos/`](hardware/esquematicos/) e prepare os 4 kits didáticos em protoboard com baixa tensão.
-3. **Prepare os Defeitos:** Consulte o guia em [`hardware/defeitos-injetados/`](hardware/defeitos-injetados/) para configurar uma falha diferente para cada grupo.
-4. **Imprima os Manuais:** Entregue aos estudantes o material presente em [`materiais-didaticos/manual-do-aluno/`](materiais-didaticos/manual-do-aluno/).
-5. **Aplique a Oficina:** Siga o roteiro passo a passo e celebre a aprendizagem!
+1. **Consulte a Proposta Pedagógica:** Leia os documentos em [`docs/01-proposta/`](docs/01-proposta/) para entender os objetivos pedagógicos, fundamentação e o cronograma.
+2. **Estude o Guia de Engenharia e Monte os Circuitos:** Consulte o [`hardware/explicacao-proposta-circuitos.md`](hardware/explicacao-proposta-circuitos.md) para entender a arquitetura de segurança (*Safety by Design*: 12V SELV vs 220V confinado), o dimensionamento da malha de comando e os diagramas em [`hardware/esquematicos/`](hardware/esquematicos/).
+3. **Configure as 4 Bancadas com Falhas Controladas:** Siga o passo a passo da Seção 4 do [`hardware/explicacao-proposta-circuitos.md`](hardware/explicacao-proposta-circuitos.md) para injetar as falhas em cada protoboard (LED invertido, jumper deslocado, resistor de 100kΩ e botão rotacionado em 90°).
+4. **Imprima os Manuais dos Estudantes:** Entregue a cada equipe o manual de diagnóstico disponível em [`materiais-didaticos/manual-do-aluno/manual-conserto-air-fryer.pdf`](materiais-didaticos/manual-do-aluno/manual-conserto-air-fryer.pdf).
+5. **Apresente e Conduza a Oficina:** Utilize a apresentação interativa [`docs/03-apresentacao/apresentacao-atualizada-com-manual.html`](docs/03-apresentacao/apresentacao-atualizada-com-manual.html) (ou a versão lúdica dos alunos [`apresentacao-alunos-fios-e-fritas.html`](docs/03-apresentacao/apresentacao-alunos-fios-e-fritas.html)), acompanhe o roteiro e finalize com as batatas fritas servidas para as equipes!
 
 ---
 

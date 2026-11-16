@@ -1,223 +1,249 @@
-### Conceitos Fundamentais de Circuitos Elétricos e Eletrônica Básica
+# 🛠️ Guia de Engenharia da Bancada: Circuitos e Injeção de Falhas
+
+> **Projeto de Extensão:** Entre Fios & Fritas — Desvendando a Eletrônica da Cozinha  
+> **Instituição:** Instituto Federal de Santa Catarina (IFSC — Câmpus Florianópolis)  
+> **Público-Alvo:** Estudantes do Ensino Médio de Escolas Públicas  
+> **Objetivo deste Guia:** Manual de montagem, dimensionamento elétrico, arquitetura de segurança e preparação das 4 bancadas didáticas com defeitos controlados para o facilitador e replicadores da oficina.
+
+---
+
+## 1. Visão Geral e Segurança por Projeto (*Safety by Design*)
+
+A oficina foi concebida sob a metodologia ativa do *"aprender fazendo"* (*hands-on*), onde cada equipe de estudantes assume o papel de técnicos responsáveis por diagnosticar e consertar uma bancada que comanda uma fritadeira elétrica (*Air Fryer*).
+
+```
+   ┌────────────────────────────────────────────────────────┐
+   │         BANCADA DOS ESTUDANTES (12V DC)                │
+   │  [Fonte 12V] ──> [Botão] ──> [Resistor] ──> [LED]      │
+   └──────────────────────────┬─────────────────────────────┘
+                              │ Sinal de Comando Seguro
+                              ▼
+   ┌────────────────────────────────────────────────────────┐
+   │         BARREIRA DE ISOLAMENTO GALVÂNICO               │
+   │      Relé de Estado Sólido (SSR com Fototriac)         │
+   │      Isolamento Óptico Total: Luz aciona Chave         │
+   └──────────────────────────┬─────────────────────────────┘
+                              │ Chaveamento Físico
+                              ▼
+   ┌────────────────────────────────────────────────────────┐
+   │         CIRCUITO DE POTÊNCIA (220V AC)                 │
+   │      [Rede 220V] ──> [Fusível 10A] ──> [Air Fryer]     │
+   │      CAIXA LACRADA COM PRENSA-CABOS (SEM ACESSO)       │
+   └────────────────────────────────────────────────────────┘
+```
+
+### Princípios Fundamentais de Segurança
+1. **Manipulação 100% em Baixa Tensão (12V DC):**  
+   Os estudantes tocam, montam e testam exclusivamente a protoboard energizada em 12V DC (corrente contínua). Essa tensão é classificada como Extra-Baixa Tensão de Segurança (SELV), sendo totalmente inofensiva ao toque humano (sem risco de choque elétrico).
+2. **Potência Isolada e Confinada (220V AC):**  
+   A alimentação de 220V AC da Air Fryer permanece confinada em uma caixa isolada, com fusível térmico/geral de 10A e prensa-cabos. Nenhum estudante ou participante tem contato mecânico ou elétrico com a rede alternada.
+3. **Acionamento Óptico (Sem Conexão Elétrica entre 12V e 220V):**  
+   O elo entre a bancada e o eletrodoméstico é um **Relé de Estado Sólido (SSR)**. O acionamento interno é feito por um emissor infravermelho (LED interno) que dispara um sensor óptico (fototriac). Há zero continuidade metálica entre os dois lados do circuito.
+
+---
+
+## 2. Conceitos Fundamentais Trabalhados na Oficina
+
+| Conceito | Aplicação Prática na Bancada |
+| :--- | :--- |
+| **Tensão ($V$)** | Medição da diferença de potencial fornecida pela fonte (12V) e as quedas em cada componente da malha. |
+| **Corrente ($I$)** | Compreensão de que a corrente só flui se a malha for contínua (circuito fechado vs. circuito aberto). |
+| **Resistência ($R$)** | Limitação de corrente para proteger o LED e determinação do código de cores dos resistores. |
+| **Polaridade** | Diferenciação entre ânodo (+) e cátodo (-) do LED, mostrando que semicondutores só conduzem em sentido direto. |
+| **Matriz da Protoboard** | Lógica das conexões internas: barramentos laterais de alimentação (linhas horizontais) e nós centrais (colunas verticais). |
+| **Multímetro Digital** | Uso prático de três escalas essenciais: teste de continuidade sonoro (bip), tensão contínua (DCV) e resistência ($\Omega$). |
+
+---
+
+## 3. Circuito de Referência (Gabarito de Montagem Correta)
+
+Na montagem oficial, todos os componentes do circuito de comando estão dispostos em **série**. Quando o botão de comando é pressionado, a malha fecha, a corrente flui, o LED indicador acende e o Relé SSR atraca, disparando a Air Fryer.
+
+### Diagrama Esquemático da Malha de Comando (12V)
+
+```
+  (+12V DC) ───[ Linha Vermelha da Protoboard ]
+       │
+       ▼
+ ┌──────────────┐
+ │  Push-Button │  (Chave táctil - pinos normalmente abertos)
+ └──────┬───────┘
+        │
+        ▼
+ ┌──────────────┐
+ │ Resistor 470Ω│  (Limitação de corrente para ~18 mA)
+ └──────┬───────┘
+        │
+        ▼
+ ┌──────────────┐
+ │ LED Indicador│  (Ânodo no resistor, Cátodo no SSR)
+ └──────┬───────┘
+        │
+        ▼
+ ┌──────────────┐
+ │  Entrada SSR │  (Borne + do Relé de Estado Sólido)
+ │   LU-5-R     │
+ │  Entrada SSR │  (Borne - do Relé de Estado Sólido)
+ └──────┬───────┘
+        │
+        ▼
+   (GND / 0V) ───[ Linha Azul da Protoboard ]
+```
+
+### Memória de Cálculo e Dimensionamento Elétrico
+
+Para que o LED acenda visivelmente e a corrente seja suficiente para saturar com folga o optoacoplador interno do Relé SSR (que exige entre $3\text{ mA}$ e $10\text{ mA}$ para disparo seguro), realizamos o dimensionamento pela Lei de Kirchhoff das Malhas:
+
+$$V_{CC} = V_{\text{botão}} + V_{R} + V_{LED} + V_{SSR}$$
+
+Considerando:
+- Tensão da fonte: $V_{CC} = 12{,}0\text{ V}$
+- Queda no botão em condução: $V_{\text{botão}} \approx 0\text{ V}$
+- Queda de tensão no LED vermelho típico: $V_{LED} \approx 2{,}0\text{ V}$
+- Queda de tensão na entrada do SSR (LED infravermelho interno): $V_{SSR} \approx 1{,}5\text{ V}$
 
-- - **Grandezas Elétricas Elementares:** Introduzir de forma prática os conceitos de **tensão**, **corrente** e **resistência**, além do conceito de **circuito fechado versus circuito aberto**
+A tensão que recai sobre o resistor limitador é:
 
-(a corrente só flui se houver continuidade física).
+$$V_{R} = 12{,}0\text{ V} - 2{,}0\text{ V} - 1{,}5\text{ V} = 8{,}5\text{ V}$$
 
-##### Componentes Básicos e Função
+Aplicando a Lei de Ohm para um resistor padrão de $470\,\Omega$:
 
-- - - **Resistores:** Limitação de corrente.
-      - **LEDs:** Indicadores visuais de funcionamento e a importância da **polaridade**
+$$I = \frac{V_{R}}{R} = \frac{8{,}5\text{ V}}{470\,\Omega} \approx 0{,}0181\text{ A} = \mathbf{18{,}1\text{ mA}}$$
 
-(anodo/catodo).
+> **Conclusão Técnica:** A corrente de $\approx 18\text{ mA}$ é perfeitamente segura para um resistor de $1/4\text{ W}$ ($P = V \cdot I \approx 8{,}5\text{ V} \cdot 0{,}0181\text{ A} \approx 0{,}154\text{ W} < 0{,}25\text{ W}$), garante alta luminosidade ao LED e supera amplamente o limiar de disparo do relé.
 
-- - - **Chaves e Botões (Push-buttons):** Abertura e fechamento de trechos de comando.
-      - **Relé de Estado Sólido (Conceito):** Ensinar que o relé funciona como uma "chave acionada eletronicamente", em que uma baixa tensão comanda a ligação de um eletrodoméstico.
+---
 
-### Leitura e Montagem em Protoboard (Matriz de Contatos)
+## 4. Mapeamento das 4 Bancadas com Falhas Injetadas ("Os 4 Esquadrões")
 
-- - **Estrutura e Lógica da Protoboard:** Ensinar como funcionam as conexões internas: - As trilhas laterais de alimentação (linhas horizontais de + e -). - As colunas de conexão de nós (linhas verticais de componentes).
-    - **Inserção e Organização:** Como posicionar os terminais sem entortá-los e como ligar os
+Para tornar a dinâmica acessível no tempo de aula (oficina de 1h30 a 2h), cada bancada recebe um circuito com **exatamente um defeito clássico de montagem**. Os estudantes devem aplicar o método de investigação técnica: observar o sintoma, levantar hipóteses, testar com o multímetro e realizar o conserto.
 
-_jumpers_ entre os nós corretos.
+---
 
-### Diagnóstico de Defeitos e Uso do Multímetro
+### 🔴 Bancada 1: LED Invertido (Bloqueio por Polaridade Reversa)
 
-- - **Operação Básica do Multímetro:** Como utilizar as escalas para medição de **tensão contínua (DC)** e, fundamentalmente, a função de **continuidade / teste sonoro** para rastreamento de nós.
-    - **Método de Resolução de Problemas (Troubleshooting):** Como levantar hipóteses diante de um circuito inoperante (o "defeito" simulado da equipe) e testar nó a nó onde a conexão foi interrompida ou montada de forma invertida.
+* **Conceito Trabalhado:** Polaridade de semicondutores (o diodo só conduz em sentido direto; em sentido reverso, bloqueia a passagem da corrente).
+* **O Defeito Injetado:** O LED é inserido com o Cátodo (perna menor / chanfro) voltado para o resistor e o Ânodo (perna longa) voltado para a entrada do SSR.
 
-### Segurança Elétrica e Noções de Montagem
+```
+(+12V) ─── [Botão] ─── [Resistor 470 Ω] ─── [ Cátodo (-) ──|>|── Ânodo (+) ] ─── [SSR (+)] ...
+                                            ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+                                            LED POLARIZADO EM SENTIDO REVERSO
+```
 
-- - **Diferenciação entre Baixa Tensão e Rede Elétrica:** Ensinar que na bancada eles estão manipulando apenas **12V (corrente contínua)**, totalmente seguro ao toque humano, enquanto a rede elétrica de 220V permanece isolada em uma caixa fechada.
-    - **Conscientização de Segurança:** Cuidados essenciais ao energizar circuitos e manusear eletrodomésticos reais.
+* **Montagem na Protoboard:**
+  - Resistor conectado na **Linha 10**.
+  - Perna menor do LED (Cátodo) inserida na **Linha 10**.
+  - Perna maior do LED (Ânodo) inserida na **Linha 11**.
+  - Jumper que vai ao SSR (+) inserido na **Linha 11**.
+* **Sintoma Observado:** Ao pressionar o botão, o LED não acende e a Air Fryer não liga.
+* **Roteiro de Diagnóstico com Multímetro:**
+  1. *Escala de Tensão DC (20V):* Manter o botão pressionado e medir sobre os terminais do LED. O multímetro indicará praticamente os $12\text{V}$ inteiros da fonte, comprovando que o LED está agindo como uma barreira aberta.
+  2. *Escala de Teste de Diodo:* Com o circuito desenergizado, colocar a ponta vermelha no ânodo e a preta no cátodo. O display só mostrará condução se as pontas forem invertidas.
+* **Ação de Correção:** Desespetar o LED da protoboard, girá-lo em 180° e reinseri-lo com a perna longa (ânodo) na Linha 10 (lado do resistor).
 
-A proposta é **totalmente viável**, pedagogicamente excelente e está perfeitamente alinhada à metodologia ativa de _"aprender fazendo"_ descrita na proposta do projeto.
+---
 
-A seguir, apresento uma análise crítica de viabilidade, pontos fortes, riscos e sugestões práticas para estruturar a dinâmica:
+### 🟡 Bancada 2: Jumper em Linha Deslocada (Circuito Aberto)
 
-### Pontos Fortes da Proposta
+* **Conceito Trabalhado:** Matriz de contatos da protoboard (furos na mesma coluna compartilham o mesmo contato metálico; colunas adjacentes são isoladas entre si).
+* **O Defeito Injetado:** Um jumper que deveria conectar a saída do resistor à entrada do LED é inserido uma linha ao lado, criando uma descontinuidade física invisível ao olho desatento.
 
-- - **Conexão Realidade-Conceito:** A recompensa tangível (a batata frita pronta no final) conecta o esforço cognitivo à utilidade prática imediata de um eletrodoméstico, aumentando muito o engajamento.
-    - **Segurança por Isolamento (Arquitetura do Protótipo):** Como definido no Documento 3, a bancada opera em **12V DC** na protoboard. A comutação da rede de 220V é feita por um relé de estado sólido (SSR) confinado em uma caixa fechada com fusível e prensa-cabos. Os estudantes **nunca têm contato com a alta tensão**, eliminando o risco de choque elétrico durante a atividade.
-    - **Formação Cidadã e Limites de Segurança:** Ensinar que aparelhos têm riscos internos (capacitores carregados, tensões de rede, ferramentas térmicas como ferro de solda) ensina responsabilidade, desmistifica a tecnologia e previne acidentes domésticos, além de valorizar a formação técnica/engenharia no IFSC.
+```
+(+12V) ─── [Botão] ─── [Linha 15: Resistor 470 Ω]  (Circuito Aberto / Vazio)
+                             ✖ DESCONEXÃO FÍSICA
+                       [Linha 16: Jumper] ─────── [Ânodo LED] ─── [SSR (+)] ...
+```
 
-### Definição do Tipo de Esquemático: Literal vs. Simplificado/Colorido
+* **Montagem na Protoboard:**
+  - O resistor de $470\,\Omega$ termina na **Linha 15**.
+  - O jumper de interligação é espetado na **Linha 16** (uma linha abaixo).
+  - O LED está inserido entre a Linha 16 e a Linha 17.
+* **Sintoma Observado:** Visualmente o circuito parece perfeito, mas a corrente é zero. Apertar o botão não produz nenhum efeito.
+* **Roteiro de Diagnóstico com Multímetro:**
+  1. *Escala de Continuidade (Bip Sonoro):* Com o circuito desenergizado, encostar uma ponta de prova no terminal de saída do resistor e a outra ponta no terminal do jumper.
+  2. *Resultado:* Silêncio total ($O.L$ no display). O multímetro não apita, provando aos alunos que não há conexão elétrica entre a Linha 15 e a Linha 16.
+* **Ação de Correção:** Mover o jumper da Linha 16 para a Linha 15, compartilhando a mesma trilha condutora do resistor.
 
-##### Recomendação: Utilize um esquemático pictórico / híbrido e colorido
+---
 
-- - **Por quê?** Estudantes de ensino médio nunca viram diagramas elétricos normatizados (NBR/IEC). Entregar símbolos puros de transistores, resistores e chaves pode gerar uma barreira visual desnecessária e frustração inicial.
+### 🔵 Bancada 3: Resistor de Valor Excessivo (Atenuação Severa de Corrente)
 
-##### Como fazer
+* **Conceito Trabalhado:** Primeira Lei de Ohm ($I = V/R$) e código de cores dos resistores.
+* **O Defeito Injetado:** O resistor correto de $470\,\Omega$ (amarelo, violeta, marrom) é substituído por um resistor de **$100\text{ k}\Omega$** (marrom, preto, amarelo) ou **$1\text{ M}\Omega$** (marrom, preto, verde).
 
-- - - Desenhe os componentes no formato visual real (desenho da protoboard com as colunas numeradas/letradas e componentes com suas cores e terminais destacados: perna maior do LED para ânodo, faixas do resistor, etc.).
-      - Paralelamente, em um canto da folha, coloque o **símbolo esquemático oficial** de cada componente. Assim, você introduz a simbologia técnica de engenharia sem travar a execução do reparo.
+```
+(+12V) ─── [Botão] ─── [ Resistor 100 kΩ ] ─── [ LED ] ─── [ SSR (+) ] ─── [ SSR (-) ] ─── (GND)
+                       ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+                       Corrente atenuada para ~0,08 mA (Abaixo do limiar do SSR)
+```
 
-### Cenários de "Defeito" Sugeridos para a Protoboard
+* **Cálculo da Falha:**
+  
+  $$I_{\text{defeito}} = \frac{8{,}5\text{ V}}{100.000\,\Omega} = 0{,}000085\text{ A} \approx \mathbf{0{,}085\text{ mA}} \; (85\,\mu\text{A})$$
 
-Para que a resolução seja acessível no tempo de uma oficina, divida as equipes com defeitos clássicos e progressivos:
+* **Sintoma Observado:** A corrente é tão minúscula que o LED não emite luz visível e o optotriac do Relé SSR não atinge a corrente mínima de disparo ($3\text{ mA}$ a $10\text{ mA}$). A Air Fryer permanece inerte.
+* **Roteiro de Diagnóstico com Multímetro:**
+  1. *Inspeção Visual:* Comparar a tabela de código de cores do Manual do Aluno com as faixas do resistor da bancada.
+  2. *Escala de Resistência ($\Omega$):* Com o circuito desenergizado, medir a resistência sobre os terminais do componente. O visor apontará $100\text{ k}\Omega$ (ou valor fora da escala de ohms baixos), revelando que a resistência é mais de 200 vezes maior do que o projeto previa.
+* **Ação de Correção:** Substituir o componente pelo resistor correto de $470\,\Omega$ fornecido no kit da bancada.
 
-1. **LED / Diodo Invertido:** O circuito está todo montado, mas o LED (ou diodo de proteção
+---
 
-da bobina/comando) está invertido. O circuito não fecha e a air fryer não aciona.
+### 🟣 Bancada 4: Botão Táctil Rotacionado em 90° (Curto-Circuito Permanente)
 
-1. **Jumper em Linha Deslocada:** O jumper deveria conectar à linha do resistor, mas está espetado na coluna ao lado (circuito aberto).
-2. **Resistor de Valor Incorreto ou Faltando:** Limitação excessiva de corrente impedindo o sinal de controle no relé SSR.
-3. **Push-Button / Chave Rotacionada em 90°:** O botão está conectado em terminais permanentemente em curto ou permanentemente abertos devido à pinagem interna da protoboard.
+* **Conceito Trabalhado:** Topologia interna de chaves tácteis (*push-buttons* de 4 pinos: os pinos opostos são unidos em pares por barras metálicas internas; o clique apenas conecta os dois pares entre si).
+* **O Defeito Injetado:** O botão é montado girado em 90° em relação ao canal central da protoboard. Com isso, o fio de entrada (+12V) e o resistor ficam conectados aos terminais que já são unidos internamente pela carcaça do botão.
 
-### Viabilidade Prática do "Tempo da Batata Frita" (Atenção Operacional)
+```
+(+12V) ─── [ Barra interna contínua do Botão ] ─── [ Resistor ] ─── [ LED ] ─── [ SSR ]
+           ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+           CIRCUITO PERMANENTEMENTE FECHADO (CURTO DIRETO)
+```
 
-A ideia de assar batatas fritas é o ponto alto da gamificação, mas exige atenção logística:
+* **Sintoma Observado:** Ao ligar a fonte de alimentação na tomada, **o LED acende imediatamente e a Air Fryer começa a funcionar na mesma hora**, sem que ninguém toque no botão! Apertar o botão não surte nenhum efeito.
+* **Roteiro de Diagnóstico com Multímetro:**
+  1. Retirar o botão da protoboard para testá-lo isoladamente na bancada.
+  2. *Escala de Continuidade (Bip Sonoro):* Colocar as pontas de prova nos terminais do botão **sem apertar**. O multímetro apita continuamente ($0{,}00\,\Omega$), provando que aqueles dois pinos estão em curto permanente no sentido em que foram conectados.
+* **Ação de Correção:** Girar o botão em 90° e reinseri-lo sobre a fenda central da protoboard, garantindo que o canal separe os dois lados e a corrente só passe sob o clique mecânico.
 
-- - **Tempo de Preparo:** Uma porção de batatas na air fryer leva de **12 a 20 minutos** a 200
+---
 
-°C. Se cada bancada for ligar a air fryer apenas no último minuto da oficina, os alunos não conseguirão comer a tempo sem estourar o horário da aula.
+## 5. Dicas Pedagógicas e Logística para o Facilitador
 
-##### Sugestão Prática
+### ⏱️ A Gestão do "Tempo da Batata Frita"
+Uma das grandes atrações da oficina é a recompensa real das batatas fritas prontas ao final. No entanto, o preparo de batatas congeladas em uma Air Fryer leva entre **12 e 18 minutos** a 200 °C:
 
-- - - **Etapa 1:** A air fryer já pode ficar pré-aquecida e ligada em um teste inicial demonstrativo pelo grupo de Mecatrônica.
-      - **Etapa 2:** Durante o desafio das equipes, a alimentação principal fica conectada ao relé SSR com o cesto já carregado com as batatas. À medida que as bancadas validam seus circuitos de 12V em protoboard, o sinal é comutado e o cozimento acontece enquanto se realiza a roda de conversa e a explicação sobre fusíveis/segurança.
+1. **Estratégia Recomendada:**
+   - Antes do início da dinâmica das equipes, o facilitador demonstra a bancada de testes e realiza um breve pré-aquecimento do cesto com as batatas.
+   - Durante a resolução dos enigmas pelas equipes, a Air Fryer permanece conectada ao relé principal.
+   - Assim que a primeira equipe conclui o conserto e comuta a chave, o aquecimento final entra em ação.
+   - Enquanto o cesto termina de dourar as batatas, o facilitador conduz a roda de conversa reflexiva sobre segurança e cursos do IFSC.
 
-### Abordagem sobre Consertos Domésticos e Segurança
+### 🔌 Conexão com Defeitos Domésticos Reais
+Durante a explicação de encerramento, o instrutor deve exibir um **Fusível Térmico real de eletrodoméstico**:
+- **O que quebra de verdade numa Air Fryer?** Na imensa maioria dos casos de descarte de eletroportáteis, o aparelho parou de funcionar porque a ventoinha travou com gordura ou houve sobreaquecimento, rompendo o termofusível interno de proteção.
+- **Demonstração com o Multímetro:** O professor testa um fusível queimado (silêncio total / $O.L$) e um fusível novo (bip contínuo sonoro). Isso desmistifica o conserto e mostra que um componente de R$ 3,00 pode evitar o descarte de um aparelho de R$ 300,00.
 
-A inclusão da explicação sobre fusíveis térmicos e capacitores é muito pertinente:
+### 🛡️ Limites Éticos e Conscientização de Risco
+É dever pedagógico da oficina alertar os estudantes sobre o que **NÃO** fazer em casa:
+- Nunca abrir aparelhos ligados à tomada ou logo após o uso.
+- Alguns equipamentos domésticos (como fornos de micro-ondas, fontes de computadores e TVs antigas) possuem **capacitores de alta tensão** que armazenam cargas letais mesmo após semanas desligados da tomada.
+- O conserto seguro exige método, instrumentos certificados e capacitação formal — exatamente a proposta dos cursos técnicos e de Engenharia Mecatrônica do IFSC.
 
-- - **Fusível Térmico da Air Fryer:** É o defeito real mais comum desse aparelho (quando a ventoinha trava ou há sobreaquecimento, o termofusível queima). Mostrar o componente e demonstrar o teste com a **escala de continuidade do multímetro (bip sonoro)** é simples, visual e impactante.
-    - **Mensagem Educativa e Limites Éticos:** Enfatize que:
-      - Manusear equipamentos ligados à tomada ou logo após o desligamento apresenta risco de choque e queimaduras.
-      - Alguns aparelhos (micro-ondas, fontes de alimentação) acumulam cargas perigosas em capacitores de alta tensão mesmo fora da tomada.
-      - O conserto responsável exige capacitação técnica formal e ferramentas seguras, servindo de convite para conhecerem cursos do IFSC.
+---
 
-Para implementar a dinâmica na oficina, o circuito de bancada deve operar em **12V DC**, controlando a entrada de acionamento do Relé de Estado Sólido (SSR) em série com um LED indicador, um resistor e o botão de acionamento. Quando a malha é fechada corretamente, o SSR chaveia a alimentação de 220V (confinada na caixa de proteção) e aciona a air fryer.
+## 6. Lista de Materiais da Bancada Completa (BOM)
 
-## Circuito de Refierência (Montagem Correta)
-
-Neste arranjo em série, o relé só fecha se todos os componentes estiverem operacionais e com a polaridade adequada.
-
-Plaintext
-
-\[ +12V DC \] ──── (Linha +)
-
-│
-
-\[ Push-Button \] (Pinos normais abertos)
-
-│
-
-\[ Resistor 470 Ω \] (Limitação de corrente)
-
-│
-
-\[ Ânodo (+) LED Cátodo (-) \]
-
-│
-
-\[ Entrada SSR (+) \] ─── (Relé de Estado Sólido) \[ Entrada SSR (-) \]
-
-│
-
-\[ GND / 0V \] ─── (Linha -)
-
-- **Cálculo da corrente nominal:** Com fonte de 12V, queda de tensão no LED de, aproximadamente, 2V e na entrada do SSR de, aproximadamente, 1,5V, a queda no resistor de 470 Ohms é de 8,5V, resultando em uma corrente de aproximadamente **18 mA**. Essa corrente acende o LED e satura com folga o optoacoplador de disparo do relé.
-
-## Mapeamento dos 4 Cenários de Defieito
-
-#### Equipe 1: LED Invertido (Bloqueio por Polaridade)
-
-- - **O Defieito:** O LED está inserido com o Cátodo voltado para o lado positivo do circuito e o Ânodo voltado para o SSR.
-
-##### Diagrama do Circuito com Falha
-
-Plaintext
-
-(+12V) ─── \[Botão\] ─── \[Resistor 470 Ω\] ─── \[ Cátodo (-) ──|>|── Ânodo (+) \] ─── \[SSR (+)\] ...
-
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ LED POLARIZADO REVERSO
-
-##### Montagem prática na protoboard
-
-- Linha 10: Terminal do Resistor e **perna menor (Cátodo / chanfiro reto)** do LED.
-- Linha 11: Perna maior (Ânodo) do LED conectada ao fio que vai ao borne (+) do SSR.
-  - **Sintoma:** Ao pressionar o botão, o LED não acende e a air fryer não liga.
-  - **Diagnóstico com multímetro:** Na escala de tensão DC (20V), ao segurar o botão, a tensão de 12V inteira recai sobre o LED bloqueado. Na escala de teste de diodo, com o circuito desenergizado, o multímetro indicará condução apenas se inverterem as pontas de prova.
-  - **Correção:** Inverter o LED na protoboard (perna longa/ânodo voltada para o resistor).
-
-#### Equipe 2: Jumper em Linha Deslocada (Circuito Aberto)
-
-- - **O Defieito:** Um jumper que deveria interligar dois componentes está espetado na coluna ao lado, aproveitando-se do fato de que os furos adjacentes na protoboard não compartilham contato metálico.
-
-##### Diagrama do Circuito com Falha
-
-Plaintext
-
-(+12V) ─── \[Botão\] ─── \[Linha 15: Resistor 470 Ω\] (Vazio / Aberto)
-
-X
-
-\[Linha 16: Jumper\] ───────── \[Ânodo LED\] ─── \[SSR (+)\] ...
-
-##### Montagem prática na protoboard
-
-- O resistor de 470 Ω termina na **Linha 15**.
-- O jumper que deveria ligar o resistor ao ânodo do LED é inserido na **Linha 16** (uma linha abaixo).
-- O LED continua inserido na Linha 16 e Linha 17.
-  - **Sintoma:** O circuito parece visualmente alinhado para um olhar desatento, mas a corrente é zero. Pressionar o botão não produz nenhum efeito.
-  - **Diagnóstico com multímetro:** Na escala de continuidade (bip sonoro), colocar uma
-
-ponta de prova no terminal do resistor e a outra no jumper. O multímetro não apita, provando a descontinuidade do nó.
-
-- - **Correção:** Mover o jumper da Linha 16 para a Linha 15, fechando a trilha condutora.
-
-#### Equipe 3: Resistor de Valor Excessivo (Corrente Insuficiente)
-
-1. **O Defieito:** Substituir o resistor correto de 470 Ohms por um resistor de **100k Ohms** (marrom, preto, amarelo) ou **1M Ohms** (marrom, preto, verde).
-
-##### Diagrama do Circuito com Falha
-
-Plaintext
-
-(+12V) ─── \[Botão\] ─── \[ Resistor 100 kΩ \] ─── \[ LED \] ─── \[ SSR (+) \] ─── \[ SSR (-) \]
-
-─── (GND)
-
-^^^^^^^^^^^^^^^^^^^ Corrente limitada a 0,08 mA
-
-##### Montagem prática na protoboard
-
-- - Inserir fisicamente o resistor de 100k Ohms no mesmo local onde deveria estar o de 470 Ohms.
-
-1. **Sintoma:** A corrente do circuito cai para 𝐼 = <sup>8,5</sup> <sup>𝑉</sup> ≈ 0, 08 𝑚𝐴 (80 µ𝐴). O LED
-
-100.000 Ω
-
-permanece apagado e a corrente não atinge o limiar mínimo de disparo do SSR (que exige tipicamente entre 3 𝑚𝐴 e 10 𝑚𝐴), mantendo a air fryer desligada.
-
-##### Diagnóstico com multímetro
-
-- - Conferência visual do código de cores das faixas.
-    - Com o circuito desenergizado, colocar o multímetro na escala de resistência (Ω) sobre
-
-os terminais do componente para constatar o valor de 100 𝑘Ω em vez de 470 Ω.
-
-1. **Correção:** Substituir o componente pelo resistor de 470 Ω (amarelo, violeta, marrom) ou
-
-330 Ω (laranja, laranja, marrom).
-
-1. **Equipe 4: Push-Button Rotacionado em 90° (Curto Permanente)**
-   - **O Defieito:** As chaves tácteis quadradas de 4 pinos possuem seus terminais internamente conectados aos pares (Pino 1 ligado ao Pino 2; Pino 3 ligado ao Pino 4). Ao girar a chave em 90° na protoboard, o sinal de entrada e o de saída ficam conectados ao mesmo par condutor contínuo.
-
-##### Diagrama do Circuito com Falha
-
-Plaintext
-
-(+12V) ─── \[ Pinos 1 e 2 unidos internamente pela carcaça \] ─── \[ Resistor \] ─── \[ LED \]
-
-─── \[ SSR \]
-
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ CIRCUITO CONTINUAMENTE FECHADO
-
-##### Montagem prática na protoboard
-
-- O botão é montado girado sobre o canal central de modo que o trilho de entrada (+12V) e a saída para o resistor fiquem conectados nos pinos correspondentes ao mesmo lado interno da chave.
-  - **Sintoma:** Ao energizar a fonte de 12V, **o LED acende imediatamente e a air firyer liga na mesma hora**, sem que ninguém pressione o botão. Pressionar o botão não desliga o aparelho.
-  - **Diagnóstico com multímetro:** Retirar o botão da protoboard e colocar o multímetro na escala de continuidade\[cite: 3\]. Ao testar os terminais sem pressionar, o multímetro apita direto, revelando que a chave está permanentemente em curto no sentido em que foi instalada.
-  - **Correção:** Girar a chave em 90° para que o canal central separe os pares condutores e a passagem de corrente ocorra apenas sob o clique mecânico.
+| Item | Componente / Especificação | Qtd por Bancada | Função no Projeto |
+| :---: | :--- | :---: | :--- |
+| **1** | Fonte Chaveada 12V DC (1A ou 2A) | 1 un | Alimentação segura da protoboard |
+| **2** | Protoboard 400 ou 830 pontos | 1 un | Montagem e matriz de contato dos alunos |
+| **3** | Push-Button 4 pinos (6x6mm) | 1 un | Chave táctil de comando |
+| **4** | Resistor $470\,\Omega$ / 1/4W (amarelo, violeta, marrom) | 1 un | Resistor oficial de limitação |
+| **5** | Resistor $100\text{ k}\Omega$ (marrom, preto, amarelo) | 1 un | Resistor de falha da Bancada 3 |
+| **6** | LED Difuso 5mm (Vermelho ou Verde) | 1 un | Indicador de passagem de corrente |
+| **7** | Relé de Estado Sólido (SSR) com entrada 3-32V DC e saída 24-380V AC (ex: Fotek, LU-5-R ou similar) | 1 un | Acoplador óptico de potência |
+| **8** | Jumpers Macho-Macho | 6 un | Interligação dos nós da protoboard |
+| **9** | Multímetro Digital com escala de continuidade sonoro | 1 un | Instrumento de diagnóstico das equipes |
+| **10** | Caixa de Potência Trancada com Fritadeira Air Fryer 220V | 1 conjunto geral | Carga final demonstrativa e recompensa |
