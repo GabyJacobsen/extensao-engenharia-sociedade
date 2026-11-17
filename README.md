@@ -123,7 +123,8 @@ Para organizar a oficina em sua escola ou comunidade:
     - Luís Fernando Rosset
     - Thauan Felipe Silva Feitoza
 
----
+
+<br>
 
 ## 📜 Licença
 
