@@ -26,4 +26,6 @@ Este diretório contém os projetos elétricos, diagramas esquemáticos e o guia
 
 ## 📐 Diagramas e Esquemáticos
 
-* **[`esquematicos/esquematico-circuito-oficial.pdf`](esquematicos/esquematico-circuito-oficial.pdf):** Diagrama esquemático oficial em formato vetorial com a malha de comando e a ligação do relé SSR.
+* **[`esquematicos/esquematico-circuito.pdf`](esquematicos/esquematico-circuito.pdf):** Diagrama esquemático oficial em formato vetorial com a malha de comando e a ligação do relé SSR.
+* **[`esquematicos/circuito-tinkercad.png`](esquematicos/circuito-tinkercad.png):** Montagem visual na protoboard simulada no Tinkercad.
+* **[`esquematicos/diagrama-funcionamento.png`](esquematicos/diagrama-funcionamento.png):** Diagrama visual de funcionamento da bancada.
